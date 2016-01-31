@@ -94,6 +94,8 @@ class PenggunaController extends Controller
     {
         $column = 'id';
         $pengguna = Pengguna::where($column , '=', $id)->first();
+        if(!$pengguna)
+            return view('errors.404');
         return view('pengguna.show', compact('pengguna'));
     }
 
@@ -106,6 +108,8 @@ class PenggunaController extends Controller
     public function edit($id)
     {
         $pengguna = Pengguna::find($id);
+        if(!$pengguna)
+            return view('errors.404');
         return view('pengguna.edit', compact('pengguna'));
     }
 
@@ -126,13 +130,15 @@ class PenggunaController extends Controller
         );
         $validator = Validator::make(Input::all(), $rules);
 
-        // process the login
+        // process the update
         if ($validator->fails()) {
             return Redirect::back()
                 ->withErrors($validator);
         } else {
-            // store
+            // update
             $pengguna = Pengguna::find($id);
+            if(!$pengguna)
+                return Redirect::to('pengguna');
             $pengguna->nama     = Input::get('nama');
             $pengguna->alamat   = Input::get('alamat');
             $pengguna->no_telp  = Input::get('no_telp');

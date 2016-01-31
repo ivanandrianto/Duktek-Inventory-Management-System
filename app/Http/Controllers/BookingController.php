@@ -115,6 +115,8 @@ class BookingController extends Controller
     public function edit($id)
     {
         $booking = Booking::find($id);
+        if(!$booking)
+            return view('errors.404');
         return view('booking.edit', compact('booking'));
     }
 
@@ -143,19 +145,22 @@ class BookingController extends Controller
                 ->withErrors($validator)
                 ->withInput();
         } else {
-            // store
-            $booking = Booking::find($id);;
+            // update
 
             $mulai_date = Input::get('waktu_booking_mulai_date');
             $mulai_time = Input::get('waktu_booking_mulai_time');
             $selesai_date = Input::get('waktu_booking_selesai_date');
             $selesai_time = Input::get('waktu_booking_selesai_time');
 
+            $booking = Booking::find($id);;
+            if(!$booking)
+                return Redirect::to('booking');
             $booking->id_barang     = Input::get('id_barang');
             $booking->id_pembooking   = Input::get('id_pembooking');
             $booking->waktu_booking_mulai = date('Y-m-d H:i:s', strtotime("$mulai_date $mulai_time"));
             $booking->waktu_booking_kembali = date('Y-m-d H:i:s', strtotime("$selesai_date $selesai_time"));
             $booking->save();
+
             // redirect
             Session::flash('message', 'Booking berhasil ditambahkan');
             return Redirect::to('booking');

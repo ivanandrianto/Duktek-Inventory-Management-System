@@ -105,6 +105,8 @@ class TransaksiController extends Controller
     {
         $column = 'id';
         $transaksi = Transaksi::where($column , '=', $id)->first();
+        if(!$transaksi)
+            return view('errors.404');
         return view('transaksi.show', compact('transaksi'));
     }
 
@@ -117,6 +119,8 @@ class TransaksiController extends Controller
     public function edit($id)
     {
         $transaksi = Transaksi::find($id);
+        if(!$transaksi)
+            return view('errors.404');
         return view('transaksi.edit', compact('transaksi'));
     }
 
@@ -139,15 +143,13 @@ class TransaksiController extends Controller
         );
         $validator = Validator::make(Input::all(), $rules);
 
-        // process the login
+        // process the update
         if ($validator->fails()) {
             return Redirect::to('booking/create')
                 ->withErrors($validator)
                 ->withInput();
         } else {
-            // store
-            $transaksi = Transaksi::find($id);
-
+            // update         
             $pinjam_date = Input::get('waktu_pinjam_date');
             $pinjam_time = Input::get('waktu_pinjam_time');
             $rencana_kembali_date = Input::get('waktu_rencana_kembali_date');
@@ -155,12 +157,16 @@ class TransaksiController extends Controller
             $kembali_date = Input::get('waktu_kembali_date');
             $kembali_time = Input::get('waktu_kembali_time');
 
+            $transaksi = Transaksi::find($id);
+            if(!$transaksi)
+                return Redirect::to('transaksi');
             $transaksi->id_barang     = Input::get('id_barang');
             $transaksi->id_peminjam   = Input::get('id_pembooking');
             $transaksi->waktu_pinjam = date('Y-m-d H:i:s', strtotime("$pinjam_date $pinjam_time"));
             $transaksi->waktu_rencana_kembali = date('Y-m-d H:i:s', strtotime("$rencana_kembali_date $rencana_kembali_time"));
             $transaksi->waktu_kembali = date('Y-m-d H:i:s', strtotime("$kembali_date $kembali_time"));
             $transaksi->save();
+
             // redirect
             Session::flash('message', 'Transaksi berhasil diupdate');
             return Redirect::to('transaksi');

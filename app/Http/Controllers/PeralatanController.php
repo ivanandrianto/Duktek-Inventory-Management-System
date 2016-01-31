@@ -108,6 +108,8 @@ class PeralatanController extends Controller
     {
         $column = 'id';
         $peralatan = Peralatan::where($column , '=', $id)->first();
+        if(!$peralatan)
+            return view('errors.404');
         return view('peralatan.show', compact('peralatan'));
     }
 
@@ -120,6 +122,8 @@ class PeralatanController extends Controller
     public function edit($id)
     {
         $peralatan = Peralatan::find($id);
+        if(!$peralatan)
+            return view('errors.404');
         return view('peralatan.edit', compact('peralatan'));
     }
 
@@ -146,6 +150,7 @@ class PeralatanController extends Controller
             return Redirect::back()
                 ->withErrors($validator);
         } else {
+            // update
             $ketersediaan = $status = "";
             if(Input::get('ketersediaan') == 0){
                 $ketersediaan = "Tidak Tersedia";
@@ -161,8 +166,9 @@ class PeralatanController extends Controller
                 $status = "Tidak Rusak";
             }
 
-            //update
             $peralatan = Peralatan::find($id);
+            if(!$peralatan)
+                return Redirect::to('peralatan');
             $peralatan->nama            = Input::get('nama');
             $peralatan->status          = $status;
             $peralatan->ketersediaan    = $ketersediaan;
