@@ -1,0 +1,10 @@
+
+--- MEMBUAT TABLE DENGAN MIGRATION ---
+php artisan make:migration create_articles_table --table=articles --create
+
+php artisan migrate
+
+
+
+--- MEMBUAT CONTROLLER ---
+php artisan make:controller ArticleController
