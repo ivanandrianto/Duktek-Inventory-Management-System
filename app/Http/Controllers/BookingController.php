@@ -101,6 +101,8 @@ class BookingController extends Controller
     {
         $column = 'id';
         $booking = Booking::where($column , '=', $id)->first();
+        if(!$booking)
+            return view('errors.404');
         return view('booking.show', compact('booking'));
     }
 
