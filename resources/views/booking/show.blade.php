@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Look! I'm CRUDding</title>
+    <title>Booking {{ $booking->id }}</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
 </head>
 <body>
@@ -11,14 +11,14 @@
 
 @include('header.navbar_loggedin')
 
-<h1>Showing {{ $booking->name }}</h1>
+<h1>Showing Booking #{{ $booking->id }}</h1>
 
     <div class="jumbotron text-center">
-        <h2>{{ $booking->name }}</h2>
         <p>
-            <h1> {{ $booking->title }}</h1>
-            <strong>Content:</strong> {{ $booking->content }}<br>
-            <strong>Excerpt:</strong> {{ $booking->excerpt }}<br>
+            <strong>Barang:</strong> {{ $booking->id_barang }}<br>
+            <strong>Pembooking:</strong> {{ $booking->id_pembooking }}<br>
+            <strong>Mulai:</strong> {{ $booking->waktu_booking_mulai }}<br>
+            <strong>Kembali:</strong> {{ $booking->waktu_booking_kembali }}<br>
         </p>
     </div>
 
