@@ -31,7 +31,7 @@ class AuthController extends Controller
 
 
     protected $redirectPath = '/dashboard';
-    protected $loginPath = '/login';
+    protected $loginPath = 'auth/login';
 
     /**
      * Create a new authentication controller instance.
@@ -99,8 +99,7 @@ class AuthController extends Controller
 
         // if the validator fails, redirect back to the form
         if ($validator->fails()) {
-           
-            return Redirect::to('login')
+            return Redirect::to('auth/login')
                 ->withErrors($validator) // send back all errors to the login form
                 ->withInput(Input::except('password')); // send back the input (not the password) so that we can repopulate the form
         } else {
