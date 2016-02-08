@@ -37,3 +37,12 @@ Route::post('checkEmail', 'AdminController@foundAdminWithEmail');
 
 //Route::post('auth/login', array('uses' => 'Auth\AuthController@postLogin'));
 
+Route::get('/peralatan', function () {
+    return view('peralatan.index');
+});
+
+Route::get('/api/v1/peralatan/{id?}', 'PeralatanController@peralatan');
+Route::post('/api/v1/peralatan', 'PeralatanController@store');
+//Route::post('/api/v1/employees/{id}', array('uses' => 'PeralatanController@update', 'middleware' => 'csrf'));
+Route::post('/api/v1/peralatan/{id}', 'PeralatanController@update');
+Route::delete('/api/v1/peralatan/{id}', 'PeralatanController@destroy');

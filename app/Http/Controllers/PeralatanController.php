@@ -18,12 +18,32 @@ use Session;
 
 class PeralatanController extends Controller
 {
-    public function __construct ()
-    {
-        if (Auth::check()) {
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function peralatan($id = null) {
+        if ($id == null) {
+            $output = new \Symfony\Component\Console\Output\ConsoleOutput(2);
+            $output->writeln("p0");
+            return Peralatan::orderBy('id', 'asc')->get();
         } else {
-            return Redirect::to('/')->send();
+            return $this->show($id);
         }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id) {
+        $output = new \Symfony\Component\Console\Output\ConsoleOutput(2);
+        $output->writeln("p1");
+        return Peralatan::find($id);
     }
 
     /**
@@ -51,10 +71,13 @@ class PeralatanController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function store(Request $request)
     {
+        $output = new \Symfony\Component\Console\Output\ConsoleOutput(2);
+        $output->writeln("store");
+
         $rules = array(
             'nama'          => 'required',
             'status'        => 'required',
@@ -66,10 +89,12 @@ class PeralatanController extends Controller
 
         // process the store
         if ($validator->fails()) {
-            return Redirect::to('peralatan/create')
-                ->withErrors($validator)
-                ->withInput();
+            $output->writeln("store2");
+            //return Redirect::to('peralatan/create')
+                //->withErrors($validator)
+                //->withInput();
         } else {
+            $output->writeln("store3");
             $ketersediaan = $status = "";
             if(Input::get('ketersediaan') == 0){
                 $ketersediaan = "Tidak Tersedia";
@@ -82,7 +107,7 @@ class PeralatanController extends Controller
             } else {
                 $status = "Tidak Rusak";
             }
-
+            $output->writeln("store4");
             // store
             $peralatan = new peralatan;
             $peralatan->nama            = Input::get('nama');
@@ -91,33 +116,16 @@ class PeralatanController extends Controller
             $peralatan->lokasi          = Input::get('lokasi');
             $peralatan->jenis           = Input::get('jenis');
             $peralatan->save();
-
-            // redirect
-            Session::flash('message', 'Peralatan berhasil ditambahkan');
-            return Redirect::to('peralatan');
+            $output->writeln("store5");
+            return 'Peralatan record successfully created with id ' . $peralatan->id;
         }
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $column = 'id';
-        $peralatan = Peralatan::where($column , '=', $id)->first();
-        if(!$peralatan)
-            return view('errors.404');
-        return view('peralatan.show', compact('peralatan'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function edit($id)
     {
@@ -132,10 +140,12 @@ class PeralatanController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(Request $request, $id)
     {
+        $output = new \Symfony\Component\Console\Output\ConsoleOutput(2);
+        $output->writeln("update");
         $rules = array(
             'nama'          => 'required',
             'status'        => 'required',
@@ -147,8 +157,8 @@ class PeralatanController extends Controller
 
         // process the update
         if ($validator->fails()) {
-            return Redirect::back()
-                ->withErrors($validator);
+            //return Redirect::back()
+                //->withErrors($validator);
         } else {
             // update
             $ketersediaan = $status = "";
@@ -177,8 +187,8 @@ class PeralatanController extends Controller
             $peralatan->save();
 
             // redirect
-            Session::flash('message', 'Peralatan berhasil diupdate');
-            return Redirect::to('peralatan');
+            //Session::flash('message', 'Peralatan berhasil diupdate');
+            return "Sucess updating user #" . $peralatan->id;
         }
     }
 
@@ -190,10 +200,12 @@ class PeralatanController extends Controller
      */
     public function destroy($id)
     {
+        $output = new \Symfony\Component\Console\Output\ConsoleOutput(2);
+        $output->writeln("destroy");
+
         $peralatan = Peralatan::find($id);
         $peralatan->delete();
 
-        Session::flash('message', 'Peralatan berhasil dihapus');
-        return Redirect::to('peralatan');
+        return "Peralatan record successfully deleted #" . $id;
     }
 }

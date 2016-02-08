@@ -1,47 +1,125 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Daftar Peralatan</title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
-</head>
-<body>
-<div class="container">
+<html lang="en-US" ng-app="peralatanRecords">
+    <head>
+        <title>Laravel 5 AngularJS CRUD Example</title>
 
-@include('header.navbar_loggedin')
+        <!-- Load Bootstrap CSS -->
+        <link href="<?= asset('css/bootstrap.min.css') ?>" rel="stylesheet">
+        <meta name="csrf-token" content="{{ csrf_token() }}" />
+        <script>angular.module("peralatanRecords").constant("CSRF_TOKEN", '{{ csrf_token() }}');</script>
+    </head>
+    <body>
+        <h2>Peralatan Database</h2>
+        <div  ng-controller="peralatanController">
 
-<h1>Daftar Peralatan</h1>
+            <!-- Table-to-load-the-data Part -->
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nama</th>
+                        <th>Jenis</th>
+                        <th>Lokasi</th>
+                        <th>Status</th>
+                        <th>Ketersediaan</th>
+                        <th><button id="btn-add" class="btn btn-primary btn-xs" ng-click="toggle('add', 0)">Add New Peralatan</button></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="peralatan in peralatans">
+                        <td><% peralatan.id %></td>
+                        <td><% peralatan.nama %></td>
+                        <td><% peralatan.jenis %></td>
+                        <td><% peralatan.lokasi %></td>
+                        <td><% peralatan.status %></td>
+                        <td><% peralatan.ketersediaan %></td>
+                        <td>
+                            <button class="btn btn-default btn-xs btn-detail" ng-click="toggle('edit', peralatan.id)">Edit</button>
+                            <button class="btn btn-danger btn-xs btn-delete" ng-click="confirmDelete(peralatan.id)">Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- End of Table-to-load-the-data Part -->
+            <!-- Modal (Pop up when detail button clicked) -->
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            <h4 class="modal-title" id="myModalLabel"><% form_title %></h4>
+                        </div>
+                        <div class="modal-body">
+                            <form name="frmPeralatan" class="form-horizontal" novalidate="">
+                                <input id="_token" name="_token" type="hidden" value="<?php echo csrf_token(); ?>"
+                                ng-model="peralatan._token">
 
-<!-- will be used to show any messages -->
-@if (Session::has('message'))
-    <div class="alert alert-info">{{ Session::get('message') }}</div>
-@endif
+                                <div class="form-group error">
+                                    <label for="nama" class="col-sm-3 control-label">Name</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control has-error" id="nama" name="nama" placeholder="Nama" value="<% nama %>" 
+                                        ng-model="peralatan.nama" ng-required="true">
+                                        <span class="help-inline" 
+                                        ng-show="frmPeralatan.nama.$invalid && frmPeralatan.nama.$touched">Name field is required</span>
+                                    </div>
+                                </div>
 
-<table class="table table-striped table-bordered">
-    <thead>
-        <tr>
-            <td>ID</td>
-            <td>Nama</td>
-            <td>Status</td>
-            <td>Ketersediaan</td>
-            <td>Lokasi</td>
-            <td>Jenis</td>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach($peralatan as $key => $value)
-        <tr>
-            <td>{{ $value->id }}</td>
-            <td>{{ $value->nama }}</td>
-            <td>{{ $value->status }}</td>
-            <td>{{ $value->ketersediaan }}</td>
-            <td>{{ $value->lokasi }}</td>
-            <td>{{ $value->jenis }}</td>
-        </tr>
-    @endforeach
-    </tbody>
-</table>
+                                <div class="form-group error">
+                                    <label for="Jenis" class="col-sm-3 control-label">Jenis</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control has-error" id="jenis" name="jenis" placeholder="Jenis" value="<% jenis %>" 
+                                        ng-model="peralatan.jenis" ng-required="true">
+                                        <span class="help-inline" 
+                                        ng-show="frmPeralatan.jenis.$invalid && frmPeralatan.jenis.$touched">Jenis field is required</span>
+                                    </div>
+                                </div>
 
-<table class="table table-striped table-bordered">
-</div>
-</body>
+                                <div class="form-group error">
+                                    <label for="lokasi" class="col-sm-3 control-label">Lokasi</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control has-error" id="lokasi" name="lokasi" placeholder="Lokasi" value="<% lokasi %>" 
+                                        ng-model="peralatan.lokasi" ng-required="true">
+                                        <span class="help-inline" 
+                                        ng-show="frmPeralatan.lokasi.$invalid && frmPeralatan.lokasi.$touched">Lokasi field is required</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group error">
+                                    <label for="ketersediaan" class="col-sm-3 control-label">Ketersediaan</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control has-error" id="ketersediaan" name="ketersediaan" placeholder="ketersediaan" value="<% ketersediaan %>" 
+                                        ng-model="peralatan.ketersediaan" ng-required="true">
+                                        <span class="help-inline" 
+                                        ng-show="frmPeralatan.ketersediaan.$invalid && frmPeralatan.ketersediaan.$touched">Ketersediaan field is required</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group error">
+                                    <label for="status" class="col-sm-3 control-label">Status</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control has-error" id="status" name="status" placeholder="Status" value="<% status %>" 
+                                        ng-model="peralatan.status" ng-required="true">
+                                        <span class="help-inline" 
+                                        ng-show="frmPeralatan.status.$invalid && frmPeralatan.status.$touched">Status field is required</span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" id="btn-save" ng-click="save(modalstate, id, '{{ csrf_token() }}')" ng-disabled="frmPeralatan.$invalid">Save changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Load Javascript Libraries (AngularJS, JQuery, Bootstrap) -->
+        <script src="<?= asset('app/lib/angular/angular.min.js') ?>"></script>
+        <script src="<?= asset('js/jquery.min.js') ?>"></script>
+        <script src="<?= asset('js/bootstrap.min.js') ?>"></script>
+        
+        <!-- AngularJS Application Scripts -->
+        <script src="<?= asset('app/app.js') ?>"></script>
+        <script src="<?= asset('app/controllers/peralatan.js') ?>"></script>
+    </body>
 </html>

@@ -18,13 +18,6 @@ use Session;
 
 class PerbaikanController extends Controller
 {
-    public function __construct ()
-    {
-        if (Auth::check()) {
-        } else {
-            return Redirect::to('/')->send();
-        }
-    }
 
     /**
      * Display a listing of the resource.
