@@ -94,20 +94,21 @@ class PeralatanController extends Controller
                 //->withErrors($validator)
                 //->withInput();
         } else {
-            $output->writeln("store3");
             $ketersediaan = $status = "";
-            if(Input::get('ketersediaan') == 0){
-                $ketersediaan = "Tidak Tersedia";
-            } else {
+            $output->writeln("ketersediaan " . Input::get('ketersediaan'));
+            if(Input::get('ketersediaan') == 1){
                 $ketersediaan = "Tersedia";
+            } else {
+                $ketersediaan = "Sedang Digunakan";
             }
 
             if(Input::get('status') == 0){
                 $status = "Rusak";
+            } else if(Input::get('status') == 1) {
+                $status = "Baik";
             } else {
-                $status = "Tidak Rusak";
+                $status = "Perbaikan";
             }
-            $output->writeln("store4");
             // store
             $peralatan = new peralatan;
             $peralatan->nama            = Input::get('nama');
@@ -161,19 +162,18 @@ class PeralatanController extends Controller
                 //->withErrors($validator);
         } else {
             // update
-            $ketersediaan = $status = "";
-            if(Input::get('ketersediaan') == 0){
-                $ketersediaan = "Tidak Tersedia";
-            } else {
+            if(Input::get('ketersediaan') == 1){
                 $ketersediaan = "Tersedia";
+            } else {
+                $ketersediaan = "Sedang Digunakan";
             }
-            $output = new \Symfony\Component\Console\Output\ConsoleOutput(2);
 
-            $output->writeln(Input::get('status'));
             if(Input::get('status') == 0){
                 $status = "Rusak";
+            } else if(Input::get('status') == 1) {
+                $status = "Baik";
             } else {
-                $status = "Tidak Rusak";
+                $status = "Perbaikan";
             }
 
             $peralatan = Peralatan::find($id);

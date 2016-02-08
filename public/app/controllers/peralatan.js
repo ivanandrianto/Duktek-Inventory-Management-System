@@ -8,12 +8,24 @@ app.controller('peralatanController', function($scope, $http, API_URL) {
                 $scope.peralatans = response;
             });
     
+    $scope.ketersediaan_list = [
+        {"value":"1","name":"Tersedia"},
+        {"value":"0","name":"Sedang Digunakan"}
+    ];
+
+    $scope.status_list = [
+        {"value":"1","name":"Baik"},
+        {"value":"0","name":"Rusak"},
+        {"value":"2","name":"Perbaikan"}
+    ];
+
     //show modal form
     $scope.toggle = function(modalstate, id) {
         $scope.modalstate = modalstate;
         switch (modalstate) {
             case 'add':
                 $scope.form_title = "Add New Peralatan";
+                $scope.peralatan = "";
                 break;
             case 'edit':
 
@@ -23,6 +35,19 @@ app.controller('peralatanController', function($scope, $http, API_URL) {
                         .success(function(response) {
                             console.log(response);
                             $scope.peralatan = response;
+                            if($scope.peralatan.ketersediaan == "Tersedia"){
+                                $scope.peralatan.ketersediaan = "1";
+                            } else {
+                                $scope.peralatan.ketersediaan = "0";
+                            }
+                            if($scope.peralatan.status == "Rusak"){
+                                $scope.peralatan.status = "0";
+                            } else if($scope.peralatan.status == "Baik") {
+                                $scope.peralatan.status = "1";
+                            } else {
+                                $scope.peralatan.status = "2";
+                            }
+                            
                         });
                 break;
             default:
@@ -56,7 +81,11 @@ app.controller('peralatanController', function($scope, $http, API_URL) {
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).success(function(response) {
             console.log(response);
-            location.reload();
+            if(response.length == 1){
+                location.reload();
+            } else {
+                $scope.error = "";
+            }
         }).error(function(response) {
             console.log(response);
             alert(response);

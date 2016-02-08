@@ -14,12 +14,12 @@ class CreatePeralatanTable extends Migration
     {
         if(!Schema::hasTable('peralatan')){
             Schema::create('peralatan', function (Blueprint $table) {
-                $table->increments('id');
-                $table->string('nama');
-                $table->enum('status', array('Rusak', 'Tidak Rusak'));
-                $table->enum('ketersediaan', array('Tersedia', 'Tidak Tersedia'));
-                $table->string('lokasi');
-                $table->string('jenis');
+                $table->increments('id')->unique();
+                $table->string('nama',50);
+                $table->enum('status', array('Rusak', 'Perbaikan','Baik'));
+                $table->enum('ketersediaan', array('Tersedia', 'Sedang Digunakan'));
+                $table->string('lokasi',300);
+                $table->string('jenis',50);
                 $table->timestamps();
             });
         }

@@ -14,12 +14,13 @@ class CreatePerbaikanTable extends Migration
     {
         if(!Schema::hasTable('perbaikan')){
             Schema::create('perbaikan', function (Blueprint $table) {
-                $table->increments('id_perbaikan');
-                $table->integer('id_barang');
+                $table->increments('id')->unique();
+                $table->integer('id_barang')->unsigned();
                 $table->timestamp('waktu_mulai');
                 $table->timestamp('waktu_selesai');
                 $table->integer('duarsi');
                 $table->timestamps();
+                $table->foreign('id_barang')->references('id')->on('peralatan');
             });
         }
     }

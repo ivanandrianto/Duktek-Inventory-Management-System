@@ -14,12 +14,14 @@ class CreateBookingTable extends Migration
     {
         if(!Schema::hasTable('booking')){
             Schema::create('booking', function (Blueprint $table) {
-                $table->increments('id');
-                $table->integer('id_barang');
+                $table->increments('id')->unique();
+                $table->integer('id_barang')->unsigned();
                 $table->timestamp('waktu_booking_mulai');
-                $table->timestamp('waktu_booking_kembali');
-                $table->integer('id_pembooking');
+                $table->timestamp('waktu_booking_selesai');
+                $table->integer('id_pembooking')->unsigned();
                 $table->timestamps();
+                $table->foreign('id_barang')->references('id')->on('peralatan');
+                $table->foreign('id_pembooking')->references('id')->on('pengguna');
             });
         }
     }

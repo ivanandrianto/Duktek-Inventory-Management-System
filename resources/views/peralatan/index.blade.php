@@ -55,9 +55,9 @@
                                 ng-model="peralatan._token">
 
                                 <div class="form-group error">
-                                    <label for="nama" class="col-sm-3 control-label">Name</label>
+                                    <label for="nama" class="col-sm-3 control-label">Nama</label>
                                     <div class="col-sm-9">
-                                        <input type="text" class="form-control has-error" id="nama" name="nama" placeholder="Nama" value="<% nama %>" 
+                                        <input required type="text" class="form-control has-error" id="nama" name="nama" placeholder="Nama" value="<% nama %>" 
                                         ng-model="peralatan.nama" ng-required="true">
                                         <span class="help-inline" 
                                         ng-show="frmPeralatan.nama.$invalid && frmPeralatan.nama.$touched">Name field is required</span>
@@ -67,7 +67,7 @@
                                 <div class="form-group error">
                                     <label for="Jenis" class="col-sm-3 control-label">Jenis</label>
                                     <div class="col-sm-9">
-                                        <input type="text" class="form-control has-error" id="jenis" name="jenis" placeholder="Jenis" value="<% jenis %>" 
+                                        <input required type="text" class="form-control has-error" id="jenis" name="jenis" placeholder="Jenis" value="<% jenis %>" 
                                         ng-model="peralatan.jenis" ng-required="true">
                                         <span class="help-inline" 
                                         ng-show="frmPeralatan.jenis.$invalid && frmPeralatan.jenis.$touched">Jenis field is required</span>
@@ -77,7 +77,7 @@
                                 <div class="form-group error">
                                     <label for="lokasi" class="col-sm-3 control-label">Lokasi</label>
                                     <div class="col-sm-9">
-                                        <input type="text" class="form-control has-error" id="lokasi" name="lokasi" placeholder="Lokasi" value="<% lokasi %>" 
+                                        <input required type="text" class="form-control has-error" id="lokasi" name="lokasi" placeholder="Lokasi" value="<% lokasi %>" 
                                         ng-model="peralatan.lokasi" ng-required="true">
                                         <span class="help-inline" 
                                         ng-show="frmPeralatan.lokasi.$invalid && frmPeralatan.lokasi.$touched">Lokasi field is required</span>
@@ -87,8 +87,14 @@
                                 <div class="form-group error">
                                     <label for="ketersediaan" class="col-sm-3 control-label">Ketersediaan</label>
                                     <div class="col-sm-9">
-                                        <input type="text" class="form-control has-error" id="ketersediaan" name="ketersediaan" placeholder="ketersediaan" value="<% ketersediaan %>" 
-                                        ng-model="peralatan.ketersediaan" ng-required="true">
+                                        <select class="form-control has-error" id="ketersediaan" name="ketersediaan" 
+                                        
+                                            ng-init="peralatan.ketersediaan=ketersediaan_list[0]['value']"
+                                            ng-model="peralatan.ketersediaan"
+                                            ng-options="x.value as x.name for x in ketersediaan_list" 
+                                        >
+                                        </select>
+                                        
                                         <span class="help-inline" 
                                         ng-show="frmPeralatan.ketersediaan.$invalid && frmPeralatan.ketersediaan.$touched">Ketersediaan field is required</span>
                                     </div>
@@ -97,8 +103,12 @@
                                 <div class="form-group error">
                                     <label for="status" class="col-sm-3 control-label">Status</label>
                                     <div class="col-sm-9">
-                                        <input type="text" class="form-control has-error" id="status" name="status" placeholder="Status" value="<% status %>" 
+                                        <select required class="form-control has-error" id="status" name="status" placeholder="Status" value="<% status %>" 
                                         ng-model="peralatan.status" ng-required="true">
+                                            <option value="1">Baik</option>
+                                            <option value="0">Rusak</option>
+                                            <option value="2">Perbaikan</option>
+                                        </select>
                                         <span class="help-inline" 
                                         ng-show="frmPeralatan.status.$invalid && frmPeralatan.status.$touched">Status field is required</span>
                                     </div>

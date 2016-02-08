@@ -14,14 +14,16 @@ class CreateTransaksiTable extends Migration
     {
         if(!Schema::hasTable('transaksi')){
             Schema::create('transaksi', function (Blueprint $table) {
-                $table->increments('id');
-                $table->integer('id_barang');
+                $table->increments('id')->unique();
+                $table->integer('id_barang')->unsigned();
                 $table->timestamp('waktu_pinjam');
                 $table->timestamp('waktu_rencana_kembali');
                 $table->timestamp('waktu_kembali');
                 $table->integer('duarsi');
-                $table->integer('id_peminjam');
+                $table->integer('id_peminjam')->unsigned();
                 $table->timestamps();
+                $table->foreign('id_peminjam')->references('id')->on('pengguna');
+                $table->foreign('id_barang')->references('id')->on('peralatan');
             });
         }
     }

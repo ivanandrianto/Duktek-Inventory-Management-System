@@ -14,11 +14,11 @@ class CreatePenggunaTable extends Migration
     {
          if(!Schema::hasTable('pengguna')){
             Schema::create('pengguna', function (Blueprint $table) {
-                $table->increments('id');
-                $table->string('nama');
-                $table->string('alamat');
-                $table->string('no_telp');
-                $table->string('jenis');
+                $table->increments('id')->unique();
+                $table->string('nama',50);
+                $table->text('alamat');
+                $table->string('no_telp',20);
+                $table->enum('jenis', array('Dosen', 'Mahasiswa','Karyawan'));
                 $table->timestamps();
             });
         }
