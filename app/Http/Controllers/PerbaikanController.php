@@ -18,6 +18,30 @@ use Session;
 
 class PerbaikanController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function perbaikan($id = null) {
+        if ($id == null) {
+
+            return Perbaikan::orderBy('id', 'desc')->with('peralatan')->get();
+            //return Response::json($perbaikans);
+        } else {
+            return $this->show($id);
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id) {
+        return Perbaikan::find($id);
+    }
 
     /**
      * Display a listing of the resource.
@@ -26,8 +50,9 @@ class PerbaikanController extends Controller
      */
     public function index()
     {
-        $perbaikan = Perbaikan::all();       
-        return view('perbaikan.index', compact('perbaikan'));
+        $perbaikan = Perbaikan::all();
+        $peralatan = Peralatan::all();    
+        return view('perbaikan.index2', compact('perbaikan','peralatan'));
     }
 
     /**
@@ -44,33 +69,43 @@ class PerbaikanController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function store(Request $request)
     {
-        //
-    }
+        $rules = array(
+            'id_barang'     => 'required',
+            'waktu_mulai'   => 'required'
+        );
+        $validator = Validator::make(Input::all(), $rules);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
+        // process the store
+        if ($validator->fails()) {
+            return $validator->messages()->toJson();
+
+        } else {
+            // store
+            $perbaikan = new perbaikan;
+            $perbaikan->id_barang       = Input::get('id_barang');
+            $perbaikan->waktu_mulai     = Input::get('waktu_mulai');
+            //$perbaikan->waktu_selesai   = Input::get('waktu_selesai');
+            $perbaikan->save();
+            return 1;
+        }
     }
 
     /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function edit($id)
     {
-        //
+        $perbaikan = Perbaikan::find($id);
+        if(!$perbaikan)
+            return view('errors.404');
+        return view('perbaikan.edit', compact('perbaikan'));
     }
 
     /**
@@ -82,7 +117,59 @@ class PerbaikanController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+
+        $rules = array(
+            'id_barang'     => 'required',
+            'waktu_mulai'   => 'required'
+        );
+        $validator = Validator::make(Input::all(), $rules);
+        
+        // process the store
+        if ($validator->fails()) {
+            return $validator->messages()->toJson();
+
+        } else {
+            // store
+            $perbaikan = Perbaikan::find($id);
+            $perbaikan->id_barang       = Input::get('id_barang');
+            $perbaikan->waktu_mulai     = Input::get('waktu_mulai');
+            $perbaikan->waktu_selesai   = Input::get('waktu_selesai');
+            $perbaikan->save();
+            return 1;
+        }
+    }
+
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function end(Request $request, $id)
+    {
+        $output = new \Symfony\Component\Console\Output\ConsoleOutput(2);
+        $output->writeln("end");
+
+        $rules = array(
+            'id_barang'     => 'required',
+            'waktu_selesai'   => 'required'
+        );
+        $validator = Validator::make(Input::all(), $rules);
+        $output->writeln(Input::get('waktu_mulai'));
+        
+        // process the store
+        if ($validator->fails()) {
+            return $validator->messages()->toJson();
+
+        } else {
+            // store
+            $perbaikan = Perbaikan::find($id);
+            $perbaikan->waktu_selesai   = Input::get('waktu_selesai');
+            $perbaikan->save();
+            return 1;
+        }
     }
 
     /**
@@ -93,6 +180,12 @@ class PerbaikanController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $output = new \Symfony\Component\Console\Output\ConsoleOutput(2);
+        $output->writeln("destroy");
+
+        $perbaikan = Perbaikan::find($id);
+        $perbaikan->delete();
+
+        return 1;
     }
 }

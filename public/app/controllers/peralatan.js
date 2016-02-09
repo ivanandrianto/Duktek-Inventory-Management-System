@@ -1,5 +1,5 @@
 
-app.controller('peralatanController', function($scope, $http, API_URL) {
+appPeralatan.controller('peralatanController', function($scope, $http, API_URL) {
     //retrieve peralatan listing from API
     //var token = CSRF_TOKEN;
     //alert("token = " + CSRF_TOKEN);
@@ -22,6 +22,7 @@ app.controller('peralatanController', function($scope, $http, API_URL) {
     //show modal form
     $scope.toggle = function(modalstate, id) {
         $scope.modalstate = modalstate;
+        $scope.error = "";
         switch (modalstate) {
             case 'add':
                 $scope.form_title = "Add New Peralatan";
@@ -81,10 +82,10 @@ app.controller('peralatanController', function($scope, $http, API_URL) {
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).success(function(response) {
             console.log(response);
-            if(response.length == 1){
+            if(response == 1){
                 location.reload();
             } else {
-                $scope.error = "";
+                $scope.error = response;
             }
         }).error(function(response) {
             console.log(response);
@@ -95,7 +96,7 @@ app.controller('peralatanController', function($scope, $http, API_URL) {
 
     //delete record
     $scope.confirmDelete = function(id) {
-        var isConfirmDelete = confirm('Are you sure you want this record?');
+        var isConfirmDelete = confirm('Apakah Anda yakin ingin menghapus record ini?');
         if (isConfirmDelete) {
             $http({
                 method: 'DELETE',

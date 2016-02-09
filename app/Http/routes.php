@@ -40,9 +40,16 @@ Route::post('checkEmail', 'AdminController@foundAdminWithEmail');
 Route::get('/peralatan', function () {
     return view('peralatan.index');
 });
-
 Route::get('/api/v1/peralatan/{id?}', 'PeralatanController@peralatan');
 Route::post('/api/v1/peralatan', 'PeralatanController@store');
-//Route::post('/api/v1/employees/{id}', array('uses' => 'PeralatanController@update', 'middleware' => 'csrf'));
 Route::post('/api/v1/peralatan/{id}', 'PeralatanController@update');
 Route::delete('/api/v1/peralatan/{id}', 'PeralatanController@destroy');
+
+Route::get('/perbaikan', function () {
+    return view('perbaikan.index');
+});
+Route::get('/api/v1/perbaikan/{id?}', 'PerbaikanController@perbaikan');
+Route::post('/api/v1/perbaikan', 'PerbaikanController@store');
+Route::post('/api/v1/perbaikan/{id}', 'PerbaikanController@update');
+Route::post('/api/v1/perbaikan/end/{id}', 'PerbaikanController@end');
+Route::delete('/api/v1/perbaikan/{id}', 'PerbaikanController@destroy');

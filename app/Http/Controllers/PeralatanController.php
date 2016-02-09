@@ -26,8 +26,6 @@ class PeralatanController extends Controller
      */
     public function peralatan($id = null) {
         if ($id == null) {
-            $output = new \Symfony\Component\Console\Output\ConsoleOutput(2);
-            $output->writeln("p0");
             return Peralatan::orderBy('id', 'asc')->get();
         } else {
             return $this->show($id);
@@ -41,8 +39,6 @@ class PeralatanController extends Controller
      * @return Response
      */
     public function show($id) {
-        $output = new \Symfony\Component\Console\Output\ConsoleOutput(2);
-        $output->writeln("p1");
         return Peralatan::find($id);
     }
 
@@ -53,7 +49,7 @@ class PeralatanController extends Controller
      */
     public function index()
     {
-        $peralatan = Peralatan::all();       
+        $peralatan = Peralatan::all();     
         return view('peralatan.index', compact('peralatan'));
     }
 
@@ -79,7 +75,7 @@ class PeralatanController extends Controller
         $output->writeln("store");
 
         $rules = array(
-            'nama'          => 'required',
+            'nama'          => 'required|min:5',
             'status'        => 'required',
             'ketersediaan'  => 'required',
             'lokasi'        => 'required',
@@ -93,6 +89,8 @@ class PeralatanController extends Controller
             //return Redirect::to('peralatan/create')
                 //->withErrors($validator)
                 //->withInput();
+            return $validator->messages()->toJson();
+
         } else {
             $ketersediaan = $status = "";
             $output->writeln("ketersediaan " . Input::get('ketersediaan'));
@@ -118,7 +116,7 @@ class PeralatanController extends Controller
             $peralatan->jenis           = Input::get('jenis');
             $peralatan->save();
             $output->writeln("store5");
-            return 'Peralatan record successfully created with id ' . $peralatan->id;
+            return 1;
         }
     }
 
@@ -148,7 +146,7 @@ class PeralatanController extends Controller
         $output = new \Symfony\Component\Console\Output\ConsoleOutput(2);
         $output->writeln("update");
         $rules = array(
-            'nama'          => 'required',
+            'nama'          => 'required|min:5',
             'status'        => 'required',
             'ketersediaan'  => 'required',
             'lokasi'        => 'required',
@@ -158,8 +156,7 @@ class PeralatanController extends Controller
 
         // process the update
         if ($validator->fails()) {
-            //return Redirect::back()
-                //->withErrors($validator);
+            return $validator->messages()->toJson();
         } else {
             // update
             if(Input::get('ketersediaan') == 1){
@@ -188,7 +185,7 @@ class PeralatanController extends Controller
 
             // redirect
             //Session::flash('message', 'Peralatan berhasil diupdate');
-            return "Sucess updating user #" . $peralatan->id;
+            return 1;
         }
     }
 

@@ -50,6 +50,7 @@
                             <h4 class="modal-title" id="myModalLabel"><% form_title %></h4>
                         </div>
                         <div class="modal-body">
+                            <% error %>
                             <form name="frmPeralatan" class="form-horizontal" novalidate="">
                                 <input id="_token" name="_token" type="hidden" value="<?php echo csrf_token(); ?>"
                                 ng-model="peralatan._token">

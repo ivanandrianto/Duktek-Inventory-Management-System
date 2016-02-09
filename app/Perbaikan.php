@@ -11,4 +11,8 @@ class Perbaikan extends Model
     public function peralatan(){
     	return $this->hasOne('App\Peralatan', 'id', 'id_barang');
     }
+
+    public function allPeralatan(){
+    	return Peralatan::all();
+    }
 }
