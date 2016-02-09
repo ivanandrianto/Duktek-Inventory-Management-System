@@ -17,3 +17,15 @@ var appPengguna = angular.module('penggunaRecords', [], function($interpolatePro
         $interpolateProvider.endSymbol('%>');
     })
 	.constant('API_URL', 'http://localhost:8000/api/v1/');
+
+var appTransaksi = angular.module('transaksiRecords', ["ngQuickDate"], function($interpolateProvider) {
+        $interpolateProvider.startSymbol('<%');
+        $interpolateProvider.endSymbol('%>');
+    })
+    .constant('API_URL', 'http://localhost:8000/api/v1/');
+
+var appBooking = angular.module('bookingRecords', ["ngQuickDate"], function($interpolateProvider) {
+        $interpolateProvider.startSymbol('<%');
+        $interpolateProvider.endSymbol('%>');
+    })
+    .constant('API_URL', 'http://localhost:8000/api/v1/');

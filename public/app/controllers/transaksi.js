@@ -1,11 +1,11 @@
 
-appPerbaikan.controller('perbaikanController', function($scope, $http, API_URL) {
-    //retrieve perbaikan listing from API
+appTransaksi.controller('transaksiController', function($scope, $http, API_URL) {
+    //retrieve transaksi listing from API
     //var token = CSRF_TOKEN;
     //alert("token = " + CSRF_TOKEN);
-    $http.get(API_URL + "perbaikan")
+    $http.get(API_URL + "transaksi")
             .success(function(response) {
-                $scope.perbaikans = response;
+                $scope.transaksis = response;
             });
 
     $http.get(API_URL + "peralatan")
@@ -13,6 +13,8 @@ appPerbaikan.controller('perbaikanController', function($scope, $http, API_URL) 
                 $scope.peralatans = response;
             });
 
+    $scope.ro_truefalse = false;
+    //alert(peralatans[0][0]);
     var datetime_offset = 7*60*60000;
 
     //show modal form
@@ -21,36 +23,43 @@ appPerbaikan.controller('perbaikanController', function($scope, $http, API_URL) 
         $scope.error = "";
         switch (modalstate) {
             case 'add':
-                $scope.form_title = "Buat Perbaikan";
-                $scope.perbaikan = "";
+                $scope.ro_truefalse = false;
+                $scope.form_title = "Buat Transaksi";
+                $scope.transaksi = "";
                 $scope.myDate = "";
-                $('.waktu_mulai').show();
-                $('.waktu_selesai').hide();
+                $scope.myDate1 = "";
+                $('.waktu_pinjam').show();
+                $('.waktu_rencana_kembali').show();
+                $('.waktu_kembali').hide();
                 break;
             case 'end':
-                $scope.form_title = "Akhiri Perbaikan";
+                $scope.ro_truefalse = true;
+                $scope.form_title = "Akhiri Transaksi";
                 $scope.id = id;
                 $scope.myDate2 = "";
-                $('.waktu_mulai').hide();
-                $('.waktu_selesai').show();
-                $http.get(API_URL + 'perbaikan/' + id)
+                $('.waktu_pinjam').hide();
+                $('.waktu_rencana_kembali').hide();
+                $('.waktu_kembali').show();
+                $http.get(API_URL + 'transaksi/' + id)
                         .success(function(response) {
                             console.log(response);
-                            $scope.perbaikan = response;
-                            $scope.myDate2 = $scope.perbaikan.waktu_selesai;
+                            $scope.transaksi = response;
+                            $scope.myDate2 = "";
                         });
                 break;
             case 'edit':
-                $('.waktu_selesai').show();
-                $('.waktu_mulai').show();
-                $scope.form_title = "Perbaikan Detail";
+                $scope.ro_truefalse = false;
+                $('.waktu_kembali').show();
+                $('.waktu_pinjam').show();
+                $scope.form_title = "Transaksi Detail";
                 $scope.id = id;
-                $http.get(API_URL + 'perbaikan/' + id)
+                $http.get(API_URL + 'transaksi/' + id)
                         .success(function(response) {
                             console.log(response);
-                            $scope.perbaikan = response;
-                            $scope.myDate = $scope.perbaikan.waktu_mulai;
-                            $scope.myDate2 = $scope.perbaikan.waktu_selesai;
+                            $scope.transaksi    = response;
+                            $scope.myDate       = $scope.transaksi.waktu_pinjam;
+                            $scope.myDate1      = $scope.transaksi.waktu_rencana_kembali;
+                            $scope.myDate2      = $scope.transaksi.waktu_kembali;
                         });
                 break;
             default:
@@ -62,14 +71,16 @@ appPerbaikan.controller('perbaikanController', function($scope, $http, API_URL) 
 
     //save new record / update existing record
     $scope.save = function(modalstate, id, csrf_token) {
-        var url = API_URL + "perbaikan";
+        var url = API_URL + "transaksi";
         var data = $.param({
             '_token' : csrf_token,
-            'id_barang' : $scope.perbaikan.id_barang,
-            'waktu_mulai' : $scope.perbaikan.waktu_mulai,
-            'waktu_selesai' : $scope.perbaikan.waktu_selesai,
+            'id_barang' : $scope.transaksi.id_barang,
+            'id_peminjam' : $scope.transaksi.id_peminjam,
+            'waktu_pinjam' : $scope.transaksi.waktu_pinjam,
+            'waktu_rencana_kembali' : $scope.transaksi.waktu_rencana_kembali,
+            'waktu_kembali' : $scope.transaksi.waktu_kembali
         });
-        alert($scope.perbaikan.id_barang);
+        
         var date;
         date = new Date($scope.myDate);
         date = new Date(date.getTime() + datetime_offset);
@@ -79,7 +90,19 @@ appPerbaikan.controller('perbaikanController', function($scope, $http, API_URL) 
             ('00' + date.getUTCHours()).slice(-2) + ':' + 
             ('00' + date.getUTCMinutes()).slice(-2) + ':' + 
             ('00' + date.getUTCSeconds()).slice(-2);
-        $scope.perbaikan.waktu_mulai = date;
+        $scope.transaksi.waktu_pinjam = date;
+
+        var date1;
+        date1 = new Date($scope.myDate1);
+        date1 = new Date(date1.getTime() + datetime_offset);
+        date1 = date1.getUTCFullYear() + '-' +
+            ('00' + (date1.getUTCMonth()+1)).slice(-2) + '-' +
+            ('00' + date1.getUTCDate()).slice(-2) + ' ' + 
+            ('00' + date1.getUTCHours()).slice(-2) + ':' + 
+            ('00' + date1.getUTCMinutes()).slice(-2) + ':' + 
+            ('00' + date1.getUTCSeconds()).slice(-2);
+        $scope.transaksi.waktu_rencana_kembali = date1;
+        
 
         var date2;
         date2 = new Date($scope.myDate2);
@@ -90,18 +113,19 @@ appPerbaikan.controller('perbaikanController', function($scope, $http, API_URL) 
             ('00' + date2.getUTCHours()).slice(-2) + ':' + 
             ('00' + date2.getUTCMinutes()).slice(-2) + ':' + 
             ('00' + date2.getUTCSeconds()).slice(-2);
-        $scope.perbaikan.waktu_selesai = date2;
-        //append perbaikan id to the URL if the form is in edit mode
+        $scope.transaksi.waktu_kembali = date2;
+        
+        //append transaksi id to the URL if the form is in edit mode
         if (modalstate === 'edit'){
             url += "/" + id;
         } else if(modalstate === 'end'){
             url += "/end/" + id;
         }
-        alert(csrf_token);
+        alert(url); 
         $http({
             method: 'POST',
             url: url,
-            data: $.param($scope.perbaikan),
+            data: $.param($scope.transaksi),
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).success(function(response) {
             console.log(response);
@@ -123,7 +147,7 @@ appPerbaikan.controller('perbaikanController', function($scope, $http, API_URL) 
         if (isConfirmDelete) {
             $http({
                 method: 'DELETE',
-                url: API_URL + 'perbaikan/' + id
+                url: API_URL + 'transaksi/' + id
             }).success(function(response) {
                 console.log(response);
                 location.reload();

@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Auth;
 use App\Admin;
 use App\Transaksi;
+use App\Peralatan;
+use App\Pengguna;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -20,6 +22,33 @@ use Session;
 
 class TransaksiController extends Controller
 {
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function transaksi($id = null) {
+        $output = new \Symfony\Component\Console\Output\ConsoleOutput(2);
+        $output->writeln("transaksi");
+        if ($id == null) {
+
+            return Transaksi::orderBy('id', 'desc')->get();
+            //return Response::json($perbaikans);
+        } else {
+            return $this->show($id);
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id) {
+        return Transaksi::find($id)->with('peralatan')->get();;
+    }
 
     /**
      * Display a listing of the resource.
@@ -42,65 +71,70 @@ class TransaksiController extends Controller
         return view('transaksi.create');
     }
 
-    /**
+   /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function store(Request $request)
     {
+
+        $output = new \Symfony\Component\Console\Output\ConsoleOutput(2);
+        $output->writeln("store");
+
         $rules = array(
-            'id_barang'        => 'required',
-            'id_peminjam'       => 'required',
-            'waktu_pinjam_date' => 'required|date',
-            'waktu_pinjam_time' => 'required',
-            'waktu_rencana_kembali_date' => 'required|date',
-            'waktu_rencana_kembali_time' => 'required'
+            'jenis_barang'          => 'required',
+            'id_peminjam'           => 'required',
+            'waktu_pinjam'          => 'required',
+            'waktu_rencana_kembali' => 'required'
         );
         $validator = Validator::make(Input::all(), $rules);
 
         // process the login
         if ($validator->fails()) {
-            return Redirect::to('booking/create')
-                ->withErrors($validator)
-                ->withInput();
+            return $validator->messages()->toJson();
         } else {
-            // store
-            $transaksi = new Transaksi;
 
-            $pinjam_date = Input::get('waktu_pinjam_date');
-            $pinjam_time = Input::get('waktu_pinjam_time');
-            $rencana_kembali_date = Input::get('waktu_rencana_kembali_date');
-            $rencana_kembali_time = Input::get('waktu_rencana_kembali_time');
-            $kembali_date = Input::get('waktu_kembali_date');
-            $kembali_time = Input::get('waktu_kembali_time');
+            //cek id pengguna
+            $pengguna = Pengguna::find(Input::get('id_peminjam'));
+            if(!$pengguna)
+                return "ID pengguna tidak ditemukan";
 
-            $transaksi->id_barang     = Input::get('id_barang');
-            $transaksi->id_peminjam   = Input::get('id_pembooking');
-            $transaksi->waktu_pinjam = date('Y-m-d H:i:s', strtotime("$pinjam_date $pinjam_time"));
-            $transaksi->waktu_rencana_kembali = date('Y-m-d H:i:s', strtotime("$rencana_kembali_date $rencana_kembali_time"));
-            $transaksi->waktu_kembali = date('Y-m-d H:i:s', strtotime("$kembali_date $kembali_time"));
-            $transaksi->save();
-            // redirect
-            Session::flash('message', 'Transaksi berhasil ditambahkan');
-            return Redirect::to('transaksi');
+            // cek ketersediaan
+            $alat_sesuai_jenis = Peralatan::where('jenis' , '=', Input::get('jenis_barang'))->get();
+            $selected_id = -1;
+            foreach ($alat_sesuai_jenis as $alat)
+            {
+                $output->writeln($alat->status);
+                $output->writeln($alat->ketersediaan);
+                if((strcmp($alat->status,"Baik") == 0) && (strcmp($alat->ketersediaan,"Tersedia") == 0)){
+                    $selected_id = $alat->id;
+                    $output->writeln($selected_id);
+                    break;
+                }
+
+            }
+            if($selected_id < 1){
+                return "Tidak ada alat tersedia";
+            } else {
+                //cek tanggal
+                if(strtotime(Input::get('waktu_rencana_kembali')) <= strtotime(Input::get('waktu_pinjam'))){
+                    return "Tanggal tidak valid";
+                } else {
+                    // store
+                    $transaksi = new transaksi;
+                    $transaksi->id_barang               = $selected_id;
+                    //ganti dengan jenis barang
+                    $transaksi->id_peminjam             = Input::get('id_peminjam');
+                    $transaksi->waktu_pinjam            = Input::get('waktu_pinjam');
+                    $transaksi->waktu_rencana_kembali   = Input::get('waktu_rencana_kembali');
+                    $transaksi->save();
+                }
+                return 1;
+            }
+
         }
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $column = 'id';
-        $transaksi = Transaksi::where($column , '=', $id)->first();
-        if(!$transaksi)
-            return view('errors.404');
-        return view('transaksi.show', compact('transaksi'));
     }
 
     /**
@@ -127,42 +161,59 @@ class TransaksiController extends Controller
     public function update(Request $request, $id)
     {
         $rules = array(
-            'id_barang'        => 'required',
-            'id_peminjam'       => 'required',
-            'waktu_pinjam_date' => 'required|date',
-            'waktu_pinjam_time' => 'required',
-            'waktu_rencana_kembali_date' => 'required|date',
-            'waktu_rencana_kembali_time' => 'required'
+            'id_barang'             => 'required',
+            'id_peminjam'           => 'required',
+            'waktu_pinjam'          => 'required',
+            'waktu_rencana_kembali' => 'required'
         );
         $validator = Validator::make(Input::all(), $rules);
 
         // process the update
         if ($validator->fails()) {
-            return Redirect::to('booking/create')
-                ->withErrors($validator)
-                ->withInput();
+            return $validator->messages()->toJson();
         } else {
             // update         
-            $pinjam_date = Input::get('waktu_pinjam_date');
-            $pinjam_time = Input::get('waktu_pinjam_time');
-            $rencana_kembali_date = Input::get('waktu_rencana_kembali_date');
-            $rencana_kembali_time = Input::get('waktu_rencana_kembali_time');
-            $kembali_date = Input::get('waktu_kembali_date');
-            $kembali_time = Input::get('waktu_kembali_time');
-
             $transaksi = Transaksi::find($id);
             if(!$transaksi)
-                return Redirect::to('transaksi');
-            $transaksi->id_barang     = Input::get('id_barang');
-            $transaksi->id_peminjam   = Input::get('id_pembooking');
-            $transaksi->waktu_pinjam = date('Y-m-d H:i:s', strtotime("$pinjam_date $pinjam_time"));
-            $transaksi->waktu_rencana_kembali = date('Y-m-d H:i:s', strtotime("$rencana_kembali_date $rencana_kembali_time"));
-            $transaksi->waktu_kembali = date('Y-m-d H:i:s', strtotime("$kembali_date $kembali_time"));
+                return "Not Found";
+            $transaksi->id_barang               = Input::get('id_barang');
+            $transaksi->id_peminjam             = Input::get('id_peminjam');
+            $transaksi->waktu_pinjam            = Input::get('waktu_pinjam');
+            $transaksi->waktu_rencana_kembali   = Input::get('waktu_rencana_kembali');
+            $transaksi->waktu_kembali           = Input::get('waktu_kembali');
             $transaksi->save();
 
-            // redirect
-            Session::flash('message', 'Transaksi berhasil diupdate');
-            return Redirect::to('transaksi');
+            return 1;
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function end(Request $request, $id)
+    {
+        $rules = array(
+            'waktu_kembali' => 'required'
+        );
+        $validator = Validator::make(Input::all(), $rules);
+        
+        // process the store
+        if ($validator->fails()) {
+            return $validator->messages()->toJson();
+
+        } else {
+            // store
+            $transaksi = Transaksi::find($id);
+            if(!$transaksi)
+                return "Not Found";
+            $transaksi->waktu_kembali   = Input::get('waktu_kembali');
+            $transaksi->save();
+
+            return 1;
         }
     }
 
@@ -175,10 +226,11 @@ class TransaksiController extends Controller
     public function destroy($id)
     {
         $transaksi = Transaksi::find($id);
+        if(!$transaksi)
+                return "Not Found";
         $transaksi->delete();
 
-        Session::flash('message', 'Transaksi berhasil dihapus');
-        return Redirect::to('transaksi');
+        return 1;
     }
 }
 

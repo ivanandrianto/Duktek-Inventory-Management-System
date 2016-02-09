@@ -61,3 +61,20 @@ Route::get('/api/v1/pengguna/{id?}', 'PenggunaController@pengguna');
 Route::post('/api/v1/pengguna', 'PenggunaController@store');
 Route::post('/api/v1/pengguna/{id}', 'PenggunaController@update');
 Route::delete('/api/v1/pengguna/{id}', 'PenggunaController@destroy');
+
+Route::get('/transaksi', function () {
+    return view('transaksi.index');
+});
+Route::get('/api/v1/transaksi/{id?}', 'TransaksiController@transaksi');
+Route::post('/api/v1/transaksi', 'TransaksiController@store');
+Route::post('/api/v1/transaksi/{id}', 'TransaksiController@update');
+Route::post('/api/v1/transaksi/end/{id}', 'TransaksiController@end');
+Route::delete('/api/v1/transaksi/{id}', 'TransaksiController@destroy');
+
+Route::get('/booking', function () {
+    return view('booking.index');
+});
+Route::get('/api/v1/booking/{id?}', 'BookingController@booking');
+Route::post('/api/v1/booking', 'BookingController@store');
+Route::post('/api/v1/booking/{id}', 'BookingController@update');
+Route::delete('/api/v1/booking/{id}', 'BookingController@destroy');

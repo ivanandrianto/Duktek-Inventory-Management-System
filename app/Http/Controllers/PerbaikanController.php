@@ -131,6 +131,8 @@ class PerbaikanController extends Controller
         } else {
             // store
             $perbaikan = Perbaikan::find($id);
+            if(!$perbaikan)
+                return "Not Found";
             $perbaikan->id_barang       = Input::get('id_barang');
             $perbaikan->waktu_mulai     = Input::get('waktu_mulai');
             $perbaikan->waktu_selesai   = Input::get('waktu_selesai');
@@ -166,6 +168,8 @@ class PerbaikanController extends Controller
         } else {
             // store
             $perbaikan = Perbaikan::find($id);
+            if(!$perbaikan)
+                return "Not Found";
             $perbaikan->waktu_selesai   = Input::get('waktu_selesai');
             $perbaikan->save();
             return 1;
@@ -180,10 +184,9 @@ class PerbaikanController extends Controller
      */
     public function destroy($id)
     {
-        $output = new \Symfony\Component\Console\Output\ConsoleOutput(2);
-        $output->writeln("destroy");
-
         $perbaikan = Perbaikan::find($id);
+        if(!$perbaikan)
+                return "Not Found";
         $perbaikan->delete();
 
         return 1;
