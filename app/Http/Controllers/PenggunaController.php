@@ -19,6 +19,28 @@ use Session;
 class PenggunaController extends Controller
 {
 
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function pengguna($id = null) {
+        if ($id == null) {
+            return Pengguna::orderBy('id', 'asc')->get();
+        } else {
+            return $this->show($id);
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id) {
+        return Pengguna::find($id);
+    }
 
     /**
      * Display a listing of the resource.
@@ -27,7 +49,7 @@ class PenggunaController extends Controller
      */
     public function index()
     {
-        $pengguna = Pengguna::all();       
+        $pengguna = Pengguna::all();     
         return view('pengguna.index', compact('pengguna'));
     }
 
@@ -45,11 +67,14 @@ class PenggunaController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function store(Request $request)
     {
+        $output = new \Symfony\Component\Console\Output\ConsoleOutput(2);
+        $output->writeln("store");
         $rules = array(
+            'id'        => 'required|integer',
             'nama'      => 'required',
             'alamat'    => 'required',
             'no_telp'   => 'required',
@@ -59,44 +84,45 @@ class PenggunaController extends Controller
 
         // process the login
         if ($validator->fails()) {
-            return Redirect::to('pengguna/create')
-                ->withErrors($validator)
-                ->withInput();
+            return $validator->messages()->toJson();
         } else {
-            // store
-            $pengguna = new pengguna;
-            $pengguna->nama         = Input::get('nama');
-            $pengguna->alamat       = Input::get('alamat');
-            $pengguna->no_telp      = Input::get('no_telp');
-            $pengguna->jenis        = Input::get('jenis');
-            $pengguna->save();
 
-            // redirect
-            Session::flash('message', 'Pengguna berhasil ditambahkan');
-            return Redirect::to('pengguna');
+            //cek apakah id yang sama sudah ada
+            $pengguna = Pengguna::find(Input::get('id'));
+            if($pengguna){
+
+                $output->writeln("s1");
+                return "ID harus unik";
+            } else {
+                $output->writeln("s2");
+                $jenis = "";
+                if(Input::get('jenis') == 1){
+                    $jenis = "Mahasiswa";
+                } else if(Input::get('jenis') == 2) {
+                    $jenis = "Dosen";
+                } else {
+                    $jenis = "Karyawan";
+                }
+
+                // store
+                $pengguna = new pengguna;
+                $pengguna->id           = Input::get('id');
+                $pengguna->nama         = Input::get('nama');
+                $pengguna->alamat       = Input::get('alamat');
+                $pengguna->no_telp      = Input::get('no_telp');
+                $pengguna->jenis        = $jenis;
+                $pengguna->save();
+
+                return 1;
+            }
         }
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $column = 'id';
-        $pengguna = Pengguna::where($column , '=', $id)->first();
-        if(!$pengguna)
-            return view('errors.404');
-        return view('pengguna.show', compact('pengguna'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function edit($id)
     {
@@ -111,11 +137,12 @@ class PenggunaController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(Request $request, $id)
     {
         $rules = array(
+            'id'        => 'required|integer',
             'nama'      => 'required',
             'alamat'    => 'required',
             'no_telp'   => 'required',
@@ -125,22 +152,28 @@ class PenggunaController extends Controller
 
         // process the update
         if ($validator->fails()) {
-            return Redirect::back()
-                ->withErrors($validator);
+            return $validator->messages()->toJson();
         } else {
+            $jenis = "";
+            if(Input::get('jenis') == 1){
+                $jenis = "Mahasiswa";
+            } else if(Input::get('jenis') == 2) {
+                $jenis = "Dosen";
+            } else {
+                $jenis = "Karyawan";
+            }
             // update
             $pengguna = Pengguna::find($id);
             if(!$pengguna)
-                return Redirect::to('pengguna');
+                return "Not Found";
+            $pengguna->id       = Input::get('id');
             $pengguna->nama     = Input::get('nama');
             $pengguna->alamat   = Input::get('alamat');
             $pengguna->no_telp  = Input::get('no_telp');
-            $pengguna->jenis    = Input::get('jenis');
+            $pengguna->jenis    = $jenis;
             $pengguna->save();
 
-            // redirect
-            Session::flash('message', 'Pengguna berhasil diupdate');
-            return Redirect::to('pengguna');
+            return 1;
         }
     }
 
@@ -156,6 +189,6 @@ class PenggunaController extends Controller
         $pengguna->delete();
 
         Session::flash('message', 'Pengguna berhasil dihapus');
-        return Redirect::to('pengguna');
+        return 1;
     }
 }

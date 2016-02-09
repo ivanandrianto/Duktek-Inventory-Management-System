@@ -93,7 +93,6 @@ class PeralatanController extends Controller
 
         } else {
             $ketersediaan = $status = "";
-            $output->writeln("ketersediaan " . Input::get('ketersediaan'));
             if(Input::get('ketersediaan') == 1){
                 $ketersediaan = "Tersedia";
             } else {
@@ -115,7 +114,7 @@ class PeralatanController extends Controller
             $peralatan->lokasi          = Input::get('lokasi');
             $peralatan->jenis           = Input::get('jenis');
             $peralatan->save();
-            $output->writeln("store5");
+
             return 1;
         }
     }
@@ -175,7 +174,7 @@ class PeralatanController extends Controller
 
             $peralatan = Peralatan::find($id);
             if(!$peralatan)
-                return Redirect::to('peralatan');
+                return "Not Found";
             $peralatan->nama            = Input::get('nama');
             $peralatan->status          = $status;
             $peralatan->ketersediaan    = $ketersediaan;
@@ -183,8 +182,6 @@ class PeralatanController extends Controller
             $peralatan->jenis           = Input::get('jenis');
             $peralatan->save();
 
-            // redirect
-            //Session::flash('message', 'Peralatan berhasil diupdate');
             return 1;
         }
     }
@@ -203,6 +200,6 @@ class PeralatanController extends Controller
         $peralatan = Peralatan::find($id);
         $peralatan->delete();
 
-        return "Peralatan record successfully deleted #" . $id;
+        return 1;
     }
 }

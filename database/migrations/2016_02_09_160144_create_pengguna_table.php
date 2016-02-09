@@ -12,16 +12,16 @@ class CreatePenggunaTable extends Migration
      */
     public function up()
     {
-         if(!Schema::hasTable('pengguna')){
+         //if(!Schema::hasTable('pengguna')){
             Schema::create('pengguna', function (Blueprint $table) {
-                $table->increments('id')->unique();
+                $table->integer('id')->unsigned()->unique();
                 $table->string('nama',50);
                 $table->text('alamat');
                 $table->string('no_telp',20);
                 $table->enum('jenis', array('Dosen', 'Mahasiswa','Karyawan'));
                 $table->timestamps();
             });
-        }
+        //}
     }
 
     /**

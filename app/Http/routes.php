@@ -53,3 +53,11 @@ Route::post('/api/v1/perbaikan', 'PerbaikanController@store');
 Route::post('/api/v1/perbaikan/{id}', 'PerbaikanController@update');
 Route::post('/api/v1/perbaikan/end/{id}', 'PerbaikanController@end');
 Route::delete('/api/v1/perbaikan/{id}', 'PerbaikanController@destroy');
+
+Route::get('/pengguna', function () {
+    return view('pengguna.index');
+});
+Route::get('/api/v1/pengguna/{id?}', 'PenggunaController@pengguna');
+Route::post('/api/v1/pengguna', 'PenggunaController@store');
+Route::post('/api/v1/pengguna/{id}', 'PenggunaController@update');
+Route::delete('/api/v1/pengguna/{id}', 'PenggunaController@destroy');
