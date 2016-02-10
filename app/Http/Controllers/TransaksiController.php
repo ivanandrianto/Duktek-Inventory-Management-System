@@ -133,7 +133,6 @@ class TransaksiController extends Controller
                 }
                 return 1;
             }
-
         }
     }
 
@@ -172,6 +171,11 @@ class TransaksiController extends Controller
         if ($validator->fails()) {
             return $validator->messages()->toJson();
         } else {
+            //cek id pengguna
+            $pengguna = Pengguna::find(Input::get('id_peminjam'));
+            if(!$pengguna)
+                return "ID pengguna tidak ditemukan";
+            
             // update         
             $transaksi = Transaksi::find($id);
             if(!$transaksi)

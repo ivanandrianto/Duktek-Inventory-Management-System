@@ -22,6 +22,30 @@ class BookingController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @return Response
+     */
+    public function booking($id = null) {
+
+        if ($id == null) {
+            return Booking::orderBy('id', 'desc')->get();
+        } else {
+            return $this->show($id);
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id) {
+        return Booking::find($id)->with('peralatan')->get();;
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
      * @return \Illuminate\Http\Response
      */
     public function index()
@@ -44,58 +68,58 @@ class BookingController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function store(Request $request)
     {
         $rules = array(
-            'id_barang'        => 'required',
-            'id_pembooking'       => 'required',
-            'waktu_booking_mulai_date' => 'required|date',
-            'waktu_booking_mulai_time' => 'required',
-            'waktu_booking_selesai_date' => 'required|date',
-            'waktu_booking_selesai_time' => 'required'
+            'jenis_barang'             => 'required',
+            'id_pembooking'         => 'required',
+            'waktu_booking_mulai'   => 'required',
+            'waktu_booking_selesai' => 'required'
         );
         $validator = Validator::make(Input::all(), $rules);
 
         // process the login
         if ($validator->fails()) {
-            return Redirect::to('booking/create')
-                ->withErrors($validator)
-                ->withInput();
+            return $validator->messages()->toJson();
         } else {
-            // store
-            $booking = new Booking;
+            //cek id pembooking
+            $pengguna = Pengguna::find(Input::get('id_pembooking'));
+            if(!$pengguna)
+                return "ID pengguna tidak ditemukan";
 
-            $mulai_date = Input::get('waktu_booking_mulai_date');
-            $mulai_time = Input::get('waktu_booking_mulai_time');
-            $selesai_date = Input::get('waktu_booking_selesai_date');
-            $selesai_time = Input::get('waktu_booking_selesai_time');
+            $alat_sesuai_jenis = Peralatan::where('jenis' , '=', Input::get('jenis_barang'))->get();
+            $selected_id = -1;
+            foreach ($alat_sesuai_jenis as $alat)
+            {
+                // PENCARIAN ALAT YG SESUAI - BELUM DIBUAT
+                $available = true;
+                // Cek di tabel booking
 
-            $booking->id_barang     = Input::get('id_barang');
-            $booking->id_pembooking   = Input::get('id_pembooking');
-            $booking->waktu_booking_mulai = date('Y-m-d H:i:s', strtotime("$mulai_date $mulai_time"));
-            $booking->waktu_booking_kembali = date('Y-m-d H:i:s', strtotime("$selesai_date $selesai_time"));
-            $booking->save();
-            // redirect
-            Session::flash('message', 'Booking berhasil ditambahkan');
-            return Redirect::to('booking');
+
+                // Cek di tabel transaksi
+
+            }
+
+            if($selected_id < 1){
+                return "Tidak ada alat tersedia";
+            } else {
+                //cek tanggal
+                if(strtotime(Input::get('waktu_booking_mulai')) <= strtotime(Input::get('waktu_booking_selesai'))){
+                    return "Tanggal tidak valid";
+                } else {
+                    // store
+                    $booking = new Booking;
+                    $booking->id_barang                 = $selected_id;
+                    $booking->id_pembooking             = Input::get('id_peminjam');
+                    $booking->waktu_booking_mulai       = Input::get('waktu_pinjam');
+                    $booking->waktu_booking_selesai     = Input::get('waktu_rencana_kembali');
+                    $booking->save();
+                }
+                return 1;
+            }
         }
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $column = 'id';
-        $booking = Booking::where($column , '=', $id)->first();
-        if(!$booking)
-            return view('errors.404');
-        return view('booking.show', compact('booking'));
     }
 
     /**
@@ -122,40 +146,58 @@ class BookingController extends Controller
     public function update(Request $request, $id)
     {
         $rules = array(
-            'id_barang'        => 'required',
-            'id_pembooking'       => 'required',
-            'waktu_booking_mulai_date' => 'required|date',
-            'waktu_booking_mulai_time' => 'required',
-            'waktu_booking_selesai_date' => 'required|date',
-            'waktu_booking_selesai_time' => 'required'
+            'jenis_barang'          => 'required',
+            'id_pembooking'         => 'required',
+            'waktu_booking_mulai'   => 'required',
+            'waktu_booking_selesai' => 'required'
         );
         $validator = Validator::make(Input::all(), $rules);
 
         // process the login
         if ($validator->fails()) {
-            return Redirect::to('booking/create')
-                ->withErrors($validator)
-                ->withInput();
+            return $validator->messages()->toJson();
         } else {
-            // update
+            //cek id pembooking
+            $pengguna = Pengguna::find(Input::get('id_pembooking'));
+            if(!$pengguna)
+                return "ID pengguna tidak ditemukan";
 
-            $mulai_date = Input::get('waktu_booking_mulai_date');
-            $mulai_time = Input::get('waktu_booking_mulai_time');
-            $selesai_date = Input::get('waktu_booking_selesai_date');
-            $selesai_time = Input::get('waktu_booking_selesai_time');
-
-            $booking = Booking::find($id);;
+            $booking = Booking::find($id);
             if(!$booking)
-                return Redirect::to('booking');
-            $booking->id_barang     = Input::get('id_barang');
-            $booking->id_pembooking   = Input::get('id_pembooking');
-            $booking->waktu_booking_mulai = date('Y-m-d H:i:s', strtotime("$mulai_date $mulai_time"));
-            $booking->waktu_booking_kembali = date('Y-m-d H:i:s', strtotime("$selesai_date $selesai_time"));
-            $booking->save();
+                return "Not Found";
+            /* cek apakah jenis peralatan berubah
+             * jika berubah, cari alat baru
+             */
+            $id_barang_old = $booking->id_barang;
+            $barang_old = Peralatan::find($id_barang_old);
+            $jenis_barang_old = $barang_old->jenis;
+            $selected_id = -1;
+            if(strcmp(Input::get('jenis_barang'),$jenis_barang_old)==0){
+                $selected_id = $id_barang_old;
+            } else { //cari peralatan baru jika jenis berubah
+                $alat_sesuai_jenis = Peralatan::where('jenis' , '=', Input::get('jenis_barang'))->get();
+                    foreach ($alat_sesuai_jenis as $alat)
+                    {
+                        // PENCARIAN ALAT YG SESUAI - BELUM DIBUAT
 
-            // redirect
-            Session::flash('message', 'Booking berhasil ditambahkan');
-            return Redirect::to('booking');
+                    }
+            }
+            if($selected_id < 1){
+                return "Tidak ada alat tersedia";
+            } else {
+                //cek tanggal
+                if(strtotime(Input::get('waktu_booking_mulai')) <= strtotime(Input::get('waktu_booking_selesai'))){
+                    return "Tanggal tidak valid";
+                } else {
+                    // store
+                    $booking->id_barang                 = $selected_id;
+                    $booking->id_pembooking             = Input::get('id_peminjam');
+                    $booking->waktu_booking_mulai       = Input::get('waktu_pinjam');
+                    $booking->waktu_booking_selesai     = Input::get('waktu_rencana_kembali');
+                    $booking->save();
+                }
+                return 1;
+            }
         }
     }
 
@@ -168,9 +210,10 @@ class BookingController extends Controller
     public function destroy($id)
     {
         $booking = Booking::find($id);
+        if(!$booking)
+                return "Not Found";
         $booking->delete();
 
-        Session::flash('message', 'Booking berhasil dihapus');
-        return Redirect::to('booking');
+        return 1;
     }
 }
