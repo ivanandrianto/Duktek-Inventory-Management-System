@@ -32,9 +32,7 @@ class TransaksiController extends Controller
         $output = new \Symfony\Component\Console\Output\ConsoleOutput(2);
         $output->writeln("transaksi");
         if ($id == null) {
-
             return Transaksi::orderBy('id', 'desc')->get();
-            //return Response::json($perbaikans);
         } else {
             return $this->show($id);
         }
@@ -47,7 +45,7 @@ class TransaksiController extends Controller
      * @return Response
      */
     public function show($id) {
-        return Transaksi::find($id)->with('peralatan')->get();;
+        return Transaksi::with('peralatan')->get()->find($id);
     }
 
     /**

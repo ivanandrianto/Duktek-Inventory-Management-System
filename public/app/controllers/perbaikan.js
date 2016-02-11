@@ -14,7 +14,7 @@ appPerbaikan.controller('perbaikanController', function($scope, $http, API_URL) 
             });
 
     var datetime_offset = 7*60*60000;
-
+    $scope.gila = "2016-01-01 01:02:03";
     //show modal form
     $scope.toggle = function(modalstate, id) {
         $scope.modalstate = modalstate;
@@ -37,10 +37,11 @@ appPerbaikan.controller('perbaikanController', function($scope, $http, API_URL) 
                         .success(function(response) {
                             console.log(response);
                             $scope.perbaikan = response;
-                            $scope.myDate2 = $scope.perbaikan.waktu_selesai;
+                            $scope.myDate2 = new Date(Date.parse($scope.perbaikan.waktu_selesai.replace('-','/','g')));
                         });
                 break;
             case 'edit':
+                alert();
                 $('.waktu_selesai').show();
                 $('.waktu_mulai').show();
                 $scope.form_title = "Perbaikan Detail";
@@ -49,8 +50,8 @@ appPerbaikan.controller('perbaikanController', function($scope, $http, API_URL) 
                         .success(function(response) {
                             console.log(response);
                             $scope.perbaikan = response;
-                            $scope.myDate = $scope.perbaikan.waktu_mulai;
-                            $scope.myDate2 = $scope.perbaikan.waktu_selesai;
+                            $scope.myDate = new Date(Date.parse($scope.perbaikan.waktu_mulai.replace('-','/','g')));
+                            $scope.myDate2 = new Date(Date.parse($scope.perbaikan.waktu_selesai.replace('-','/','g')));
                         });
                 break;
             default:

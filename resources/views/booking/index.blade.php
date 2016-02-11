@@ -71,8 +71,7 @@ border: solid 1px red;
                                 <div class="form-group error jenis_barang">
                                     <label for="jenis_barang" class="col-sm-3 control-label">Jenis Barang</label>
                                     <div class="col-sm-9">
-                                        <select ng-disabled="ro_truefalse" class="form-control has-error" id="jenis_barang" name="jenis_barang"  
-
+                                        <select ng-disabled="ro_truefalse" class="form-control has-error" id="jenis_barang" name="jenis_barang"
                                             ng-init="booking.jenis_barang=booking.peralatan.jenis"
                                             ng-model="booking.jenis_barang"
                                             ng-options="peralatan.jenis as peralatan.jenis for peralatan in peralatans" 

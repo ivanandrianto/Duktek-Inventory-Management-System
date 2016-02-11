@@ -27,8 +27,7 @@ appBooking.controller('bookingController', function($scope, $http, API_URL) {
                 $scope.form_title = "Buat Booking";
                 $scope.booking = "";
                 $scope.myDate = "";
-                $scope.myDate1 = "";
-                $('.waktu_booking_selesai').hide();
+                $scope.myDate2 = "";
                 break;
             case 'edit':
                 $scope.ro_truefalse = false;
@@ -37,12 +36,12 @@ appBooking.controller('bookingController', function($scope, $http, API_URL) {
                 $scope.form_title = "Booking Detail";
                 $scope.id = id;
                 $http.get(API_URL + 'booking/' + id)
-                        .success(function(response) {
-                            console.log(response);
-                            $scope.booking    = response;
-                            $scope.myDate       = $scope.booking.waktu_booking_mulai;
-                            $scope.myDate2      = "";
-                        });
+                    .success(function(response) {
+                        console.log(response);
+                        $scope.booking      = response;
+                        $scope.myDate       = new Date(Date.parse($scope.booking.waktu_booking_mulai.replace('-','/','g')));
+                        $scope.myDate2      = new Date(Date.parse($scope.booking.waktu_booking_selesai.replace('-','/','g')));
+                    });
                 break;
             default:
                 break;

@@ -5,8 +5,8 @@
 
         <!-- Load Bootstrap CSS -->
         <link href="<?= asset('css/bootstrap.min.css') ?>" rel="stylesheet">
-<link href="<?= asset('css/ng-quick-date-plus-default-theme.css') ?>" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="<?= asset('css/angularjs-datetime-picker.css') ?>"/>
+        <link href="<?= asset('css/ng-quick-date-plus-default-theme.css') ?>" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="<?= asset('css/angularjs-datetime-picker.css') ?>"/>
         <meta name="csrf-token" content="{{ csrf_token() }}" />
         <style type="text/css">
             form.ng-dirty .ng-invalid .quickdate-button {
@@ -118,6 +118,7 @@
             app.controller("perbaikanController", function($scope) {
                 $scope.myDate = null;
                 $scope.myDate2 = null;
+                $scope.gila = "2016-01-01 01:02:03";
                 //$scope.setToToday = function() { $scope.myDate = new Date(); }
             });
 

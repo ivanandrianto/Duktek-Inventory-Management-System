@@ -53,13 +53,16 @@ appTransaksi.controller('transaksiController', function($scope, $http, API_URL) 
                 $('.waktu_pinjam').show();
                 $scope.form_title = "Transaksi Detail";
                 $scope.id = id;
+                //$transaksi.jenis_barang = 
                 $http.get(API_URL + 'transaksi/' + id)
                         .success(function(response) {
                             console.log(response);
                             $scope.transaksi    = response;
-                            $scope.myDate       = $scope.transaksi.waktu_pinjam;
-                            $scope.myDate1      = $scope.transaksi.waktu_rencana_kembali;
-                            $scope.myDate2      = $scope.transaksi.waktu_kembali;
+                            $scope.myDate       = new Date(Date.parse($scope.transaksi.waktu_pinjam.replace('-','/','g')));
+                            $scope.myDate1      = new Date(Date.parse($scope.transaksi.waktu_rencana_kembali.replace('-','/','g')));
+                            $scope.myDate2      = new Date(Date.parse($scope.transaksi.waktu_kembali.replace('-','/','g')));
+                            $scope.transaksi.jenis_barang = $scope.transaksi.peralatan.jenis
+                            //alert($scope.transaksi.peralatan.jenis);
                         });
                 break;
             default:
