@@ -56,8 +56,8 @@
                                 <div class="form-group error">
                                     <label for="id" class="col-sm-3 control-label">ID</label>
                                     <div class="col-sm-9">
-                                        <input required type="number" class="form-control has-error" id="id" name="id" placeholder="ID" value="<% id %>" 
-                                        ng-model="pengguna.id" ng-required="true">
+                                        <input type="number" class="form-control has-error" id="id" name="id" placeholder="ID" value="<% id %>" 
+                                        ng-model="pengguna.id" >
                                         <span class="help-inline" 
                                         ng-show="frmPengguna.id.$invalid && frmPengguna.id.$touched">Nama field is required</span>
                                     </div>

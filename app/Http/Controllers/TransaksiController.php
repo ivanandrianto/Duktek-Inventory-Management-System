@@ -29,8 +29,6 @@ class TransaksiController extends Controller
      * @return Response
      */
     public function transaksi($id = null) {
-        $output = new \Symfony\Component\Console\Output\ConsoleOutput(2);
-        $output->writeln("transaksi");
         if ($id == null) {
             return Transaksi::orderBy('id', 'desc')->get();
         } else {

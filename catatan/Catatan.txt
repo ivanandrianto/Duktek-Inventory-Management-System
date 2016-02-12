@@ -8,3 +8,6 @@ php artisan migrate
 
 --- MEMBUAT CONTROLLER ---
 php artisan make:controller ArticleController
+
+ $output = new \Symfony\Component\Console\Output\ConsoleOutput(2);
+        $output->writeln("store");

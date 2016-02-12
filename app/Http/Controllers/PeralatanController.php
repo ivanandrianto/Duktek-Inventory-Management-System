@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Auth;
 use App\Admin;
 use App\Peralatan;
+use App\Booking;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -16,9 +17,25 @@ use Illuminate\Support\Facades\Redirect;
 
 use Session;
 
+class JadwalDetail {
+    var $id_pembooking;
+    var $col;
+    var $margin;
+    var $height;
+
+    function getIDPembooking(){
+        return $this->id_pembooking;
+    }
+    function JadwalDetail($id_pembooking, $col, $margin, $height) {
+        $this->id_pembooking    = $id_pembooking;
+        $this->col              = $col;
+        $this->margin           = $margin;
+        $this->height           = $height;
+    }
+}
+
 class PeralatanController extends Controller
 {
-
     /**
      * Display a listing of the resource.
      *
@@ -30,6 +47,67 @@ class PeralatanController extends Controller
         } else {
             return $this->show($id);
         }
+    }
+
+    public function jadwal($id,$start_date,$end_date)
+    {
+        $jam_min = "00:00:00";
+        $jam_maks = "23:59:59";
+
+        $booking = Booking::where('id_barang', '=', $id)
+                    ->where('waktu_booking_selesai' , '<=', $end_date.' '.$jam_maks)
+                    ->where('waktu_booking_mulai' , '>=', $start_date.' '.$jam_min)
+                    ->get();
+        $tgl_start = substr($start_date,0,10);
+        foreach($booking as $item){
+            $col = -1;
+            $height = $margin = 0;
+            $mulai = $item["waktu_booking_mulai"];
+            $selesai = $item["waktu_booking_selesai"];
+            $jam_mulai = substr($mulai, 11);
+            $jam_selesai_ori = substr($selesai, 11);
+            $jam_selesai = $jam_selesai_ori;
+            $tgl_mulai = substr($mulai, 0, 11);
+            $col = (int)((strtotime($tgl_mulai) - strtotime($start_date)) / 86400);
+            $selisih_menit = (int)((strtotime($selesai) - strtotime($mulai)) / 60);
+            $isFirst = true;
+            $listOfBooking;
+            while($selisih_menit > 0){
+                if($isFirst){
+                    $margin = (int)((strtotime($jam_mulai) - strtotime($jam_min)) / 60);
+                    $time_batas = (int)((strtotime($jam_maks) - strtotime($jam_mulai)) / 60);
+                    if($selisih_menit <= $time_batas){
+                        $height = $selisih_menit;
+                        $selisih_menit = -1; //keluar dari loop
+                        $jam_selesai = $jam_selesai_ori;
+                    } else {
+                        $height = $time_batas;
+                        $selisih_menit -= $time_batas;
+                        $jam_selesai = $jam_maks;
+                    }
+                    $isFirst = false;
+                } else {
+                    $margin = 0;
+                    $jam_mulai = $jam_min;
+                    $time_batas = (int)((strtotime($jam_maks) - strtotime($jam_min)) / 60);
+                    if($selisih_menit <= $time_batas){
+                        $height = $selisih_menit;
+                        $selisih_menit = -1; //keluar dari loop
+                        $jam_selesai = $jam_selesai_ori;
+                    } else {
+                        $height = $time_batas;
+                        $selisih_menit -= $time_batas;
+                        $jam_selesai = $jam_maks;
+                    }
+                }
+                $jdwl = array("id"=>$item->id_pembooking, "col"=>$col, "margin"=>$margin, "height"=>$height, "jam_mulai"=>$jam_mulai, "jam_selesai"=>$jam_selesai);
+                $listOfBooking[] = $jdwl;
+                $col++;
+            }
+        }
+        $period = (int)((strtotime($end_date) - strtotime($start_date)) / 86400);
+        return view('peralatan.z', compact('booking','start_date','end_date','period','listOfBooking'));
+        
     }
 
     /**

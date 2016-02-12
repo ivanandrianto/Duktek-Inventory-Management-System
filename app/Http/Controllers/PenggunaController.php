@@ -84,7 +84,17 @@ class PenggunaController extends Controller
 
         // process the login
         if ($validator->fails()) {
-            return $validator->messages()->toJson();
+            $output = new \Symfony\Component\Console\Output\ConsoleOutput(2); 
+            $error = $validator->messages()->toJson();
+            $output->writeln("a");
+            $json_output = json_decode($error);
+            $output->writeln("b");
+            $x
+            foreach ( $json_output->trends as $trend )
+            {
+                echo "{$trend->name}\n";
+            }
+            $output->writeln($error);
         } else {
 
             //cek apakah id yang sama sudah ada

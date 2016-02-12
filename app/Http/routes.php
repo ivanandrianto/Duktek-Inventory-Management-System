@@ -40,6 +40,7 @@ Route::post('checkEmail', 'AdminController@foundAdminWithEmail');
 Route::get('/peralatan', function () {
     return view('peralatan.index');
 });
+Route::get('/peralatan/jadwal/{id}/{start_date}/{end_date}','PeralatanController@jadwal');
 Route::get('/api/v1/peralatan/{id?}', 'PeralatanController@peralatan');
 Route::post('/api/v1/peralatan', 'PeralatanController@store');
 Route::post('/api/v1/peralatan/{id}', 'PeralatanController@update');
