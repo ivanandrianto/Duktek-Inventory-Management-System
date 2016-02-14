@@ -195,7 +195,7 @@ class PeralatanController extends Controller
             $peralatan->jenis           = Input::get('jenis');
             $peralatan->save();
 
-            return $peralatan->id;
+            return 1;
         }
     }
 

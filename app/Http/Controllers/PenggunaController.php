@@ -130,7 +130,7 @@ class PenggunaController extends Controller
                 $pengguna->jenis        = $jenis;
                 $pengguna->save();
 
-                return Input::get('id');
+                return 1;
             }
         }
     }

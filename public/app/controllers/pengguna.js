@@ -1,4 +1,5 @@
 
+
 appPengguna.controller('penggunaController', function($scope, $http, API_URL) {
     //retrieve peralatan listing from API
     //var token = CSRF_TOKEN;
@@ -7,7 +8,6 @@ appPengguna.controller('penggunaController', function($scope, $http, API_URL) {
             .success(function(response) {
                 $scope.penggunas = response;
             });
-    
 
     $scope.jenis_list = [
         {"value":"1","name":"Mahasiswa"},
@@ -73,26 +73,34 @@ appPengguna.controller('penggunaController', function($scope, $http, API_URL) {
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).success(function(response) {
             console.log(response);
-            if(response >= 1){
-                $scope.penggunas = $scope.penggunas.concat($scope.pengguna);
-                $scope.penggunas
+            if(response == 1){
                 $('#myModal').modal('hide');
                 if (modalstate === 'edit'){
                     $scope.successMessage = "Data berhasil diupdate";
                 } else {
                     $scope.successMessage = "Data berhasil disimpan";
                 }
+                $('#successModal').modal({
+                    backdrop: 'static',
+                    keyboard: false  // to prevent closing with Esc button (if you want this too)
+                })
+                $('#successModal').on('hidden.bs.modal', function () {
+                    location.reload();
+                })
                 $('#successModal').modal('show');                
                 //location.reload();
             } else {
                 $scope.error = response;
             }
         }).error(function(response) {
-            alert("errro");
             console.log(response);
             alert(response);
             alert('Error');
         });
+    }
+
+    $scope.ok = function() {
+        location.reload();
     }
 
     //delete record
