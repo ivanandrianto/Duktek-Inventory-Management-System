@@ -79,3 +79,10 @@ Route::get('/api/v1/booking/{id?}', 'BookingController@booking');
 Route::post('/api/v1/booking', 'BookingController@store');
 Route::post('/api/v1/booking/{id}', 'BookingController@update');
 Route::delete('/api/v1/booking/{id}', 'BookingController@destroy');
+
+Route::get('/statistik', function () {
+    return view('statistik.index');
+});
+Route::get('/api/v1/statistik/penggunaan/{jenis}/{tahun}', 'StatistikController@frekuensiPenggunaan');
+Route::get('/api/v1/statistik/kerusakan/{jenis}/{tahun}', 'StatistikController@frekuensiKerusakan');
+Route::get('/api/v1/statistik/kelompok/{jenisBarang}/{jenisPengguna}/{tahun}', 'StatistikController@frekuensiKelompok');
