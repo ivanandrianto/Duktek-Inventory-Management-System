@@ -12,7 +12,7 @@ appTransaksi.controller('transaksiController', function($scope, $http, API_URL) 
             .success(function(response) {
                 $scope.peralatans = response;
             });
-
+    $scope.waktu_pinjam_required = false;
     $scope.ro_truefalse = false;
     //alert(peralatans[0][0]);
     var datetime_offset = 7*60*60000;
@@ -23,31 +23,35 @@ appTransaksi.controller('transaksiController', function($scope, $http, API_URL) 
         $scope.error = "";
         switch (modalstate) {
             case 'add':
+                $scope.waktu_pinjam_required = false;
                 $scope.ro_truefalse = false;
                 $scope.form_title = "Buat Transaksi";
                 $scope.transaksi = "";
                 $scope.myDate = "";
                 $scope.myDate1 = "";
-                $('.waktu_pinjam').show();
+                $('.waktu_pinjam').hide();
                 $('.waktu_rencana_kembali').show();
                 $('.waktu_kembali').hide();
                 break;
             case 'end':
+                $scope.waktu_pinjam_required = true;
                 $scope.ro_truefalse = true;
-                $scope.form_title = "Akhiri Transaksi";
+                $scope.form_title = "Tekan OK untuk mengakhiri transaksi";
                 $scope.id = id;
                 $scope.myDate2 = "";
                 $('.waktu_pinjam').hide();
                 $('.waktu_rencana_kembali').hide();
-                $('.waktu_kembali').show();
+                $('.waktu_kembali').hide();
                 $http.get(API_URL + 'transaksi/' + id)
                         .success(function(response) {
                             console.log(response);
                             $scope.transaksi = response;
                             $scope.myDate2 = "";
+                            $scope.transaksi.jenis_barang = $scope.transaksi.peralatan.jenis
                         });
                 break;
             case 'edit':
+                $scope.waktu_pinjam_required = true;
                 $scope.ro_truefalse = false;
                 $('.waktu_kembali').show();
                 $('.waktu_pinjam').show();
@@ -124,7 +128,6 @@ appTransaksi.controller('transaksiController', function($scope, $http, API_URL) 
         } else if(modalstate === 'end'){
             url += "/end/" + id;
         }
-        alert(url); 
         $http({
             method: 'POST',
             url: url,
@@ -132,8 +135,29 @@ appTransaksi.controller('transaksiController', function($scope, $http, API_URL) 
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).success(function(response) {
             console.log(response);
-            if(response == 1){
-                location.reload();
+            alert(response);
+            if(response >= 1){
+                $('#myModal').modal('hide');
+                if (modalstate === 'edit'){
+                    $scope.successMessage = "Data berhasil diupdate";
+                } else {
+                    $scope.successMessage = "Data berhasil disimpan";
+                }
+
+                $http.get(API_URL + 'transaksi/' + response)
+                .success(function(response) {
+                    $scope.saved_transaksi    = response;
+                });
+
+                $('#successModal').modal({
+                    backdrop: 'static',
+                    keyboard: false  // to prevent closing with Esc button (if you want this too)
+                })
+                $('#successModal').on('hidden.bs.modal', function () {
+                    location.reload();
+                })
+                $('#successModal').modal('show');                
+                //location.reload();
             } else {
                 $scope.error = response;
             }
@@ -142,6 +166,10 @@ appTransaksi.controller('transaksiController', function($scope, $http, API_URL) 
             alert(response);
             alert('Error');
         });
+    }
+
+    $scope.ok = function() {
+        location.reload();
     }
 
     //delete record

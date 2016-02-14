@@ -89,7 +89,7 @@
                                 <div class="form-group error waktu_pinjam">
                                     <label for="waktu_pinjam" class="col-sm-3 control-label">Waktu Pinjam</label>
                                     <div class="col-sm-9">
-                                        <quick-datepicker type="text" name="waktu_pinjam" id="waktu_pinjam" init-value="waktu_pinjam" ng-model="myDate" required></quick-datepicker>
+                                        <quick-datepicker type="text" name="waktu_pinjam" id="waktu_pinjam" init-value="waktu_pinjam" ng-model="myDate" ng-required="<% waktu_pinjam_required %>"></quick-datepicker>
                                         <span class="help-inline" 
                                         ng-show="frmTransaksi.waktu_pinjam.$invalid && frmTransaksi.waktu_pinjam.$touched">Waktu field is required</span>
                                     </div>
@@ -107,7 +107,7 @@
                                 <div class="form-group error waktu_kembali">
                                     <label for="waktu_kembali" class="col-sm-3 control-label">Waktu Kembali</label>
                                     <div class="col-sm-9">
-                                        <quick-datepicker type="text" name="waktu_kembali" id="waktu_kembali" init-value="waktu_kembali" ng-model="myDate2" required></quick-datepicker>
+                                        <quick-datepicker type="text" name="waktu_kembali" id="waktu_kembali" init-value="waktu_kembali" ng-model="myDate2"></quick-datepicker>
                                         <span class="help-inline" 
                                         ng-show="frmTransaksi.waktu_kembali.$invalid && frmTransaksi.waktu_kembali.$touched">Waktu field is required</span>
                                     </div>
@@ -118,11 +118,31 @@
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" id="btn-save" ng-click="save(modalstate, id, '{{ csrf_token() }}')" ng-disabled="frmTransaksi.$invalid">Save changes</button>
+                            <button type="button" class="btn btn-primary" id="btn-save" ng-click="save(modalstate, id, '{{ csrf_token() }}')" ng-disabled="frmTransaksi.$invalid">OK</button>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <% successMessage %>
+                            ID Transaksi: <% saved_transaksi.id %><br>
+                            ID Peralatan: <% saved_transaksi.peralatan.id %><br>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" id="btn-ok" ng-click="ok()">OK</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
         </div>
 
         <!-- Load Javascript Libraries (AngularJS, JQuery, Bootstrap) -->

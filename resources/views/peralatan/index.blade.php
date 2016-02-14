@@ -122,6 +122,21 @@
                     </div>
                 </div>
             </div>
+            <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <% successMessage %>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" id="btn-ok" ng-click="ok()">OK</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Load Javascript Libraries (AngularJS, JQuery, Bootstrap) -->

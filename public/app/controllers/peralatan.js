@@ -81,10 +81,22 @@ appPeralatan.controller('peralatanController', function($scope, $http, API_URL) 
             data: $.param($scope.peralatan),
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).success(function(response) {
-            console.log(response);
-            alert(response);
-            if(response > 1){
-                location.reload();
+            if(response == 1){
+                $('#myModal').modal('hide');
+                if (modalstate === 'edit'){
+                    $scope.successMessage = "Data berhasil diupdate";
+                } else {
+                    $scope.successMessage = "Data berhasil disimpan";
+                }
+                $('#successModal').modal({
+                    backdrop: 'static',
+                    keyboard: false  // to prevent closing with Esc button (if you want this too)
+                })
+                $('#successModal').on('hidden.bs.modal', function () {
+                    location.reload();
+                })
+                $('#successModal').modal('show');                
+                //location.reload();
             } else {
                 $scope.error = response;
             }
@@ -93,6 +105,10 @@ appPeralatan.controller('peralatanController', function($scope, $http, API_URL) 
             alert(response);
             alert('Error');
         });
+    }
+
+    $scope.ok = function() {
+        location.reload();
     }
 
     //delete record
