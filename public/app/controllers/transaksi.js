@@ -1,8 +1,7 @@
 
 appTransaksi.controller('transaksiController', function($scope, $http, API_URL) {
     //retrieve transaksi listing from API
-    //var token = CSRF_TOKEN;
-    //alert("token = " + CSRF_TOKEN);
+
     $http.get(API_URL + "transaksi")
             .success(function(response) {
                 $scope.transaksis = response;
@@ -14,12 +13,12 @@ appTransaksi.controller('transaksiController', function($scope, $http, API_URL) 
             });
     $scope.waktu_pinjam_required = false;
     $scope.ro_truefalse = false;
-    //alert(peralatans[0][0]);
     var datetime_offset = 7*60*60000;
 
     //show modal form
     $scope.toggle = function(modalstate, id) {
         $scope.modalstate = modalstate;
+        $scope.frmTransaksi.$setUntouched();
         $scope.error = "";
         switch (modalstate) {
             case 'add':
@@ -66,7 +65,6 @@ appTransaksi.controller('transaksiController', function($scope, $http, API_URL) 
                             $scope.myDate1      = new Date(Date.parse($scope.transaksi.waktu_rencana_kembali.replace('-','/','g')));
                             $scope.myDate2      = new Date(Date.parse($scope.transaksi.waktu_kembali.replace('-','/','g')));
                             $scope.transaksi.jenis_barang = $scope.transaksi.peralatan.jenis
-                            //alert($scope.transaksi.peralatan.jenis);
                         });
                 break;
             default:
@@ -135,7 +133,6 @@ appTransaksi.controller('transaksiController', function($scope, $http, API_URL) 
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).success(function(response) {
             console.log(response);
-            alert(response);
             if(response >= 1){
                 $('#myModal').modal('hide');
                 if (modalstate === 'edit'){
@@ -156,14 +153,13 @@ appTransaksi.controller('transaksiController', function($scope, $http, API_URL) 
                 $('#successModal').on('hidden.bs.modal', function () {
                     location.reload();
                 })
-                $('#successModal').modal('show');                
+                $('#successModal').modal('show');             
                 //location.reload();
             } else {
                 $scope.error = response;
             }
         }).error(function(response) {
             console.log(response);
-            alert(response);
             alert('Error');
         });
     }
@@ -184,7 +180,6 @@ appTransaksi.controller('transaksiController', function($scope, $http, API_URL) 
                 location.reload();
             }).error(function(response) {
                 console.log(response);
-                alert(response);
                 alert('Error');
             });
         } else {

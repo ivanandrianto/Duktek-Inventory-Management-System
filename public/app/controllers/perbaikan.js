@@ -18,6 +18,7 @@ appPerbaikan.controller('perbaikanController', function($scope, $http, API_URL) 
     //show modal form
     $scope.toggle = function(modalstate, id) {
         $scope.modalstate = modalstate;
+        $scope.frmPerbaikan.$setUntouched();
         $scope.error = "";
         switch (modalstate) {
             case 'add':
@@ -59,6 +60,10 @@ appPerbaikan.controller('perbaikanController', function($scope, $http, API_URL) 
         }
         console.log(id);
         $('#myModal').modal('show');
+    }
+
+    $scope.ok = function() {
+        location.reload();
     }
 
     //save new record / update existing record
@@ -107,7 +112,21 @@ appPerbaikan.controller('perbaikanController', function($scope, $http, API_URL) 
         }).success(function(response) {
             console.log(response);
             if(response == 1){
-                location.reload();
+                $('#myModal').modal('hide');
+                if (modalstate === 'edit'){
+                    $scope.successMessage = "Data berhasil diupdate";
+                } else {
+                    $scope.successMessage = "Data berhasil disimpan";
+                }
+                $('#successModal').modal({
+                    backdrop: 'static',
+                    keyboard: false  // to prevent closing with Esc button (if you want this too)
+                })
+                $('#successModal').on('hidden.bs.modal', function () {
+                    location.reload();
+                })
+                $('#successModal').modal('show');                
+                //location.reload();
             } else {
                 $scope.error = response;
             }

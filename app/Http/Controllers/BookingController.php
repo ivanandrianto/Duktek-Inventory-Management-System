@@ -77,6 +77,8 @@ class BookingController extends Controller
      */
     public function store(Request $request)
     {
+        $output = new \Symfony\Component\Console\Output\ConsoleOutput(2);
+        $output->writeln("store");
         $rules = array(
             'jenis_barang'          => 'required',
             'id_pembooking'         => 'required|integer',
@@ -84,19 +86,24 @@ class BookingController extends Controller
             'waktu_booking_selesai' => 'required'
         );
         $validator = Validator::make(Input::all(), $rules);
-
+        $output->writeln("a");
         // process the login
         if ($validator->fails()) {
             return $validator->messages()->toJson();
         } else {
+
+            
             //cek id pembooking
             $pengguna = Pengguna::find(Input::get('id_pembooking'));
             if(!$pengguna)
                 return "ID pengguna tidak ditemukan";
             $alat_sesuai_jenis = Peralatan::where('jenis' , '=', Input::get('jenis_barang'))->get();
             $selected_id = -1;
+
             $input_booking_mulai_time = strtotime(Input::get('waktu_booking_mulai'));
             $input_booking_selesai_time = strtotime(Input::get('waktu_booking_selesai'));
+            $output->writeln("1".$input_booking_mulai_time);
+            $output->writeln("2".$input_booking_selesai_time);
             foreach ($alat_sesuai_jenis as $alat)
             {
                 // PENCARIAN ALAT YG SESUAI - BELUM DIBUAT
@@ -105,12 +112,14 @@ class BookingController extends Controller
                 $booking_of_alat = Booking::where('id_barang', '=', $alat->id)->get();
                 foreach ($booking_of_alat as $booking){
                     $booking_mulai_time = strtotime($booking->waktu_booking_mulai);
-                    $booking_selseai_time = strtotime($booking->waktu_booking_selesai);
+                    $booking_selesai_time = strtotime($booking->waktu_booking_selesai);
                     if((($input_booking_mulai_time > $booking_mulai_time) && ($input_booking_mulai_time < $booking_selesai_time)) ||
-                        (($input_booking_selesai_time > $booking_mulai_time) && ($input_booking_selesai_time < $booking_selesai_time))){
+                        (($input_booking_selesai_time > $booking_mulai_time) && ($input_booking_selesai_time < $booking_selesai_time))||
+(($booking_mulai_time > $input_booking_mulai_time) && ($booking_mulai_time < $input_booking_selesai_time)) || (($booking_selesai_time > $input_booking_mulai_time) && ($booking_selesai_time < $input_booking_selesai_time))){
                             $available = false;
                     }
                 }
+                $output->writeln("c");
                 // Cek di tabel transaksi
                 if($available){
                     $transaksi_of_alat = Transaksi::where('id_barang', '=', $alat->id)->get();
@@ -118,7 +127,7 @@ class BookingController extends Controller
                         $transaksi_pinjam_time = $transaksi->waktu_pinjam;
                         $transaksi_rencana_kembali_time = $transaksi->waktu_rencana_kembali;
                         if((($input_booking_mulai_time > $transaksi_pinjam_time) && ($input_booking_mulai_time < $transaksi_rencana_kembali_time)) ||
-                            (($input_booking_selesai_time > $transaksi_pinjam_time) && ($input_booking_selesai_time < $transaksi_rencana_kembali_time))){
+                            (($input_booking_selesai_time > $transaksi_pinjam_time) && ($input_booking_selesai_time < $transaksi_rencana_kembali_time)) || (($transaksi_pinjam_time > $input_booking_mulai_time) && ($transaksi_pinjam_time < $input_booking_selesai_time)) || (($transaksi_rencana_kembali_time > $input_booking_mulai_time) && ($transaksi_rencana_kembali_time < $input_booking_selesai_time))){
                                 $available = false;
                         }
                     }
@@ -127,6 +136,7 @@ class BookingController extends Controller
                     $selected_id = $alat->id;
                 }
             }
+
             if($selected_id < 1){
                 return "Tidak ada alat tersedia";
             } else {
@@ -141,8 +151,9 @@ class BookingController extends Controller
                     $booking->waktu_booking_mulai       = Input::get('waktu_booking_mulai');
                     $booking->waktu_booking_selesai     = Input::get('waktu_booking_kembali');
                     $booking->save();
+                    return $booking->id;
                 }
-                return 1;
+                
             }
         }
     }
@@ -210,13 +221,14 @@ class BookingController extends Controller
                     // Cek di tabel booking
                     $booking_of_alat = Booking::where('id_barang', '=', $alat->id)->get();
                     foreach ($booking_of_alat as $booking){
-                        $booking_mulai_time = strtotime($booking->waktu_booking_mulai);
-                        $booking_selseai_time = strtotime($booking->waktu_booking_selesai);
-                        if((($input_booking_mulai_time > $booking_mulai_time) && ($input_booking_mulai_time < $booking_selesai_time)) ||
-                            (($input_booking_selesai_time > $booking_mulai_time) && ($input_booking_selesai_time < $booking_selesai_time))){
-                                $available = false;
-                        }
+                    $booking_mulai_time = strtotime($booking->waktu_booking_mulai);
+                    $booking_selesai_time = strtotime($booking->waktu_booking_selesai);
+                    if((($input_booking_mulai_time > $booking_mulai_time) && ($input_booking_mulai_time < $booking_selesai_time)) ||
+                        (($input_booking_selesai_time > $booking_mulai_time) && ($input_booking_selesai_time < $booking_selesai_time))||
+(($booking_mulai_time > $input_booking_mulai_time) && ($booking_mulai_time < $input_booking_selesai_time)) || (($booking_selesai_time > $input_booking_mulai_time) && ($booking_selesai_time < $input_booking_selesai_time))){
+                            $available = false;
                     }
+                }
                     // Cek di tabel transaksi
                     if($available){
                         $transaksi_of_alat = Transaksi::where('id_barang', '=', $alat->id)->get();
@@ -224,7 +236,7 @@ class BookingController extends Controller
                             $transaksi_pinjam_time = $transaksi->waktu_pinjam;
                             $transaksi_rencana_kembali_time = $transaksi->waktu_rencana_kembali;
                             if((($input_booking_mulai_time > $transaksi_pinjam_time) && ($input_booking_mulai_time < $transaksi_rencana_kembali_time)) ||
-                                (($input_booking_selesai_time > $transaksi_pinjam_time) && ($input_booking_selesai_time < $transaksi_rencana_kembali_time))){
+                                (($input_booking_selesai_time > $transaksi_pinjam_time) && ($input_booking_selesai_time < $transaksi_rencana_kembali_time)) || (($transaksi_pinjam_time > $input_booking_mulai_time) && ($transaksi_pinjam_time < $input_booking_selesai_time)) || (($transaksi_rencana_kembali_time > $input_booking_mulai_time) && ($transaksi_rencana_kembali_time < $input_booking_selesai_time))){
                                     $available = false;
                             }
                         }
@@ -247,8 +259,9 @@ class BookingController extends Controller
                     $booking->waktu_booking_mulai       = Input::get('waktu_booking_mulai');
                     $booking->waktu_booking_selesai     = Input::get('waktu_booking_kembali');
                     $booking->save();
+                    return $booking->id;
                 }
-                return 1;
+                
             }
         }
     }

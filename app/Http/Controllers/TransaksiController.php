@@ -99,7 +99,8 @@ class TransaksiController extends Controller
             // cek ketersediaan
             $alat_sesuai_jenis = Peralatan::where('jenis' , '=', Input::get('jenis_barang'))->get();
             $selected_id = -1;
-            $now = Carbon::now()->addHours(7)->toDateTimeString();  
+            $now = Carbon::now()->addHours(7)->toDateTimeString();
+            $output->writeln($now);
             $curTime = strtotime($now);
             $waktu_rencana_kembali_time = strtotime(Input::get('waktu_rencana_kembali'));
             foreach ($alat_sesuai_jenis as $alat)
@@ -120,7 +121,7 @@ class TransaksiController extends Controller
                     $output->writeln($booking_mulai_time);
                     $output->writeln($booking_selesai_time);
                     if((($curTime > $booking_mulai_time) && ($curTime < $booking_selesai_time)) ||
-                        (($waktu_rencana_kembali_time > $booking_mulai_time) && ($waktu_rencana_kembali_time < $booking_selesai_time))){
+                        (($waktu_rencana_kembali_time > $booking_mulai_time) && ($waktu_rencana_kembali_time < $booking_selesai_time))||(($booking_mulai_time > $curTime) && ($booking_mulai_time < $waktu_rencana_kembali_time))||(($booking_selesai_time > $curTime) && ($booking_selesai_time < $waktu_rencana_kembali_time))){
                             $available = false;
                     }
                 }
@@ -227,7 +228,7 @@ class TransaksiController extends Controller
                         $booking_mulai_time = strtotime($booking->waktu_booking_mulai);
                         $booking_selseai_time = strtotime($booking->waktu_booking_selesai);
                         if((($waktu_pinjam_time > $booking_mulai_time) && ($waktu_pinjam_time < $booking_selesai_time)) ||
-                            (($waktu_rencana_kembali_time > $booking_mulai_time) && ($waktu_rencana_kembali_time < $booking_selesai_time))){
+                            (($waktu_rencana_kembali_time > $booking_mulai_time) && ($waktu_rencana_kembali_time < $booking_selesai_time))||(($booking_mulai_time > $waktu_pinjam_time) && ($booking_mulai_time < $waktu_rencana_kembali_time))||(($booking_selesai_time > $waktu_pinjam_time) && ($booking_selesai_time < $waktu_rencana_kembali_time))){
                                 $available = false;
                         }
                     }
@@ -266,10 +267,11 @@ class TransaksiController extends Controller
 
         $now = Carbon::now()->addHours(7)->toDateTimeString();  
         $transaksi->waktu_kembali   = $now;
+        $id_barang = $transaksi->id_barang;
         $transaksi->save();
 
         //ubah ketersediaan peralatan
-        $peralatan = Peralatan::find($selected_id);
+        $peralatan = Peralatan::find($id_barang);
         if(!$peralatan)
             return "ID peralatan tidak ditemukan";
         $peralatan->ketersediaan = "Tersedia";
