@@ -262,10 +262,11 @@ class BookingController extends Controller
     public function destroy($id)
     {
         $booking = Booking::find($id);
-        if(!$booking)
-                return "Not Found";
-        $booking->delete();
-
-        return 1;
+        if(!$booking){
+            return "Not Found";
+        } else {
+            $booking->delete();
+            return 1;
+        }
     }
 }

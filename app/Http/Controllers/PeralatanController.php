@@ -8,6 +8,8 @@ use Auth;
 use App\Admin;
 use App\Peralatan;
 use App\Booking;
+use App\Transaksi;
+use App\Perbaikan;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -193,7 +195,7 @@ class PeralatanController extends Controller
             $peralatan->jenis           = Input::get('jenis');
             $peralatan->save();
 
-            return 1;
+            return $peralatan->id;
         }
     }
 
@@ -272,12 +274,18 @@ class PeralatanController extends Controller
      */
     public function destroy($id)
     {
-        $output = new \Symfony\Component\Console\Output\ConsoleOutput(2);
-        $output->writeln("destroy");
-
         $peralatan = Peralatan::find($id);
-        $peralatan->delete();
+        if(!$peralatan)
+                return "Not Found";
 
-        return 1;
+        $inBooking = Booking::where('id_barang' , '=', $id)->count();
+        $inTransaksi = Transaksi::where('id_barang' , '=', $id)->count();
+        $inPerbaakan = Perbaikan::where('id_barang' , '=', $id)->count();
+        if(($inBooking > 0) || ($inTransaksi > 0) || ($inPerbaakan > 0)){
+            return "Tidak dapat menghapus";
+        } else {
+            $peralatan->delete();
+            return 1;
+        }
     }
 }

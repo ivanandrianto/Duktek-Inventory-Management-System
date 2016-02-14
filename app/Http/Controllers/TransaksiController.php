@@ -228,9 +228,15 @@ class TransaksiController extends Controller
         $transaksi = Transaksi::find($id);
         if(!$transaksi)
                 return "Not Found";
-        $transaksi->delete();
-
-        return 1;
+        $curDateTime =  strtotime(new DateTime());
+        $pinjam = strtotime($transaksi->waktu_pinjam);
+        $rencana_kembali = strtotime($transaksi->waktu_rencana_kembali);
+        if(($curDateTime > $pinjam) && ($curDateTime < $rencana_kembali)){
+            return "Tidak dapat menghapus";
+        } else {
+            $transaksi->delete();
+            return 1;
+        }
     }
 }
 

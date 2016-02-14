@@ -82,7 +82,8 @@ appPeralatan.controller('peralatanController', function($scope, $http, API_URL) 
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).success(function(response) {
             console.log(response);
-            if(response == 1){
+            alert(response);
+            if(response > 1){
                 location.reload();
             } else {
                 $scope.error = response;

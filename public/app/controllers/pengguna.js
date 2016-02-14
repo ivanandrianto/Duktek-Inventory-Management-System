@@ -18,6 +18,7 @@ appPengguna.controller('penggunaController', function($scope, $http, API_URL) {
     //show modal form
     $scope.toggle = function(modalstate, id) {
         $scope.modalstate = modalstate;
+        $scope.frmPengguna.$setUntouched();
         $scope.error = "";
         switch (modalstate) {
             case 'add':
@@ -72,12 +73,22 @@ appPengguna.controller('penggunaController', function($scope, $http, API_URL) {
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).success(function(response) {
             console.log(response);
-            if(response == 1){
-                location.reload();
+            if(response >= 1){
+                $scope.penggunas = $scope.penggunas.concat($scope.pengguna);
+                $scope.penggunas
+                $('#myModal').modal('hide');
+                if (modalstate === 'edit'){
+                    $scope.successMessage = "Data berhasil diupdate";
+                } else {
+                    $scope.successMessage = "Data berhasil disimpan";
+                }
+                $('#successModal').modal('show');                
+                //location.reload();
             } else {
                 $scope.error = response;
             }
         }).error(function(response) {
+            alert("errro");
             console.log(response);
             alert(response);
             alert('Error');
@@ -92,8 +103,11 @@ appPengguna.controller('penggunaController', function($scope, $http, API_URL) {
                 method: 'DELETE',
                 url: API_URL + 'pengguna/' + id
             }).success(function(response) {
-                console.log(response);
-                location.reload();
+                if(response == 1){
+                    location.reload();
+                } else {
+                    alert("Tidak dapat menghapus pengguna");
+                }
             }).error(function(response) {
                 console.log(response);
                 alert(response);

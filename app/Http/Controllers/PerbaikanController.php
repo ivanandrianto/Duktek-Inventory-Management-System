@@ -187,8 +187,14 @@ class PerbaikanController extends Controller
         $perbaikan = Perbaikan::find($id);
         if(!$perbaikan)
                 return "Not Found";
-        $perbaikan->delete();
-
-        return 1;
+        $curDateTime =  strtotime(new DateTime());
+        $mulai = strtotime($perbaikan->waktu_booking_mulai);
+        $selesai = strtotime($perbaikan->waktu_booking_selesai);
+        if(($curDateTime > $mulai) && ($curDateTime < $selesai)){
+            return "Tidak dapat menghapus";
+        } else {
+            $perbaikan->delete();
+            return 1;
+        }
     }
 }

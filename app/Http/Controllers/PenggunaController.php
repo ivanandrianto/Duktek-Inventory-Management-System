@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Auth;
 use App\Admin;
 use App\Pengguna;
+use App\Booking;
+use App\Transaksi;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -89,11 +91,11 @@ class PenggunaController extends Controller
             $output->writeln("a");
             $json_output = json_decode($error);
             $output->writeln("b");
-            $x
+            /*$x
             foreach ( $json_output->trends as $trend )
             {
                 echo "{$trend->name}\n";
-            }
+            }*/
             $output->writeln($error);
         } else {
 
@@ -104,6 +106,11 @@ class PenggunaController extends Controller
                 $output->writeln("s1");
                 return "ID harus unik";
             } else {
+                //validate phone number
+                if (!preg_match('/^[0-9]+$/', Input::get('no_telp'))){
+                    return "No. Telp tidak valid. Hanya boleh mengandung angka";
+                }
+
                 $output->writeln("s2");
                 $jenis = "";
                 if(Input::get('jenis') == 1){
@@ -123,7 +130,7 @@ class PenggunaController extends Controller
                 $pengguna->jenis        = $jenis;
                 $pengguna->save();
 
-                return 1;
+                return Input::get('id');
             }
         }
     }
@@ -196,9 +203,17 @@ class PenggunaController extends Controller
     public function destroy($id)
     {
         $pengguna = Pengguna::find($id);
-        $pengguna->delete();
+        if(!$pengguna)
+                return "Not Found";
 
-        Session::flash('message', 'Pengguna berhasil dihapus');
-        return 1;
+        $inBooking = Booking::where('id_pembooking' , '=', $id)->count();
+        $inTransaksi = Transaksi::where('id_peminjam' , '=', $id)->count();
+        if(($inBooking > 0) || ($inTransaksi > 0)){
+            return "Tidak dapat menghapus";
+        } else {
+            $pengguna->delete();
+            return 1;
+        }
     }
 }
+

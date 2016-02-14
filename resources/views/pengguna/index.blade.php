@@ -114,6 +114,15 @@
                     </div>
                 </div>
             </div>
+            <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <% successMessage %>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Load Javascript Libraries (AngularJS, JQuery, Bootstrap) -->
