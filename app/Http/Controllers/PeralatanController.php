@@ -57,6 +57,15 @@ class PeralatanController extends Controller
      *
      * @return Response
      */
+    public function getJenis() {
+        return Peralatan::distinct()->select('jenis')->get();
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
     public function search($jenis) {
         return Peralatan::where('jenis', 'LIKE' , '%'.$jenis.'%')->get();
     }
