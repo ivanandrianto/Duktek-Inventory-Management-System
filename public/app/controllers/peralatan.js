@@ -1,12 +1,19 @@
 
-appPeralatan.controller('peralatanController', function($scope, $http, API_URL) {
-    //retrieve peralatan listing from API
-    //var token = CSRF_TOKEN;
-    //alert("token = " + CSRF_TOKEN);
-    $http.get(API_URL + "peralatan")
-            .success(function(response) {
-                $scope.peralatans = response;
-            });
+appPeralatan.controller('peralatanController', function($scope, $location, $http, API_URL) {
+
+    var jenis = $location.search().jenis;
+    if(!jenis){jenis = "";}
+    if(jenis.length>0){
+        $http.get(API_URL + "peralatan/s/" + jenis)
+        .success(function(response) {
+            $scope.peralatans = response;
+        });
+    } else {
+        $http.get(API_URL + "peralatan")
+        .success(function(response) {
+            $scope.peralatans = response;
+        });
+    }
     
     $scope.ketersediaan_list = [
         {"value":"1","name":"Tersedia"},

@@ -35,6 +35,15 @@ class PenggunaController extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function search($nama) {
+        return Pengguna::where('nama', 'LIKE' , '%'.$nama.'%')->get();
+    }
+
+    /**
      * Display the specified resource.
      *
      * @param  int  $id

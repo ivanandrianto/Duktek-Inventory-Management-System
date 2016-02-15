@@ -88,7 +88,13 @@ class PerbaikanController extends Controller
             $perbaikan = new perbaikan;
             $perbaikan->id_barang       = Input::get('id_barang');
             $perbaikan->waktu_mulai     = Input::get('waktu_mulai');
-            //$perbaikan->waktu_selesai   = Input::get('waktu_selesai');
+            //ubah status peralatan
+            $peralatan = Peralatan::find(Input::get('id_barang'));
+            if(!$peralatan)
+                return "ID peralatan tidak ditemukan";
+            if(strcmp($peralatan->status,"Rusak") == 0)
+                $peralatan->status = "Perbaikan";
+            $peralatan->save();
             $perbaikan->save();
             return 1;
         }
@@ -167,10 +173,24 @@ class PerbaikanController extends Controller
 
         } else {
             // store
+            $peralatan = Peralatan::find($id);
+            if(!$peralatan)
+                return "ID peralatan tidak ditemukan";
+
             $perbaikan = Perbaikan::find($id);
             if(!$perbaikan)
                 return "Not Found";
+            $id_barang = $perbaikan->id_barang;
             $perbaikan->waktu_selesai   = Input::get('waktu_selesai');
+
+            //ubah status peralatan
+            $peralatan = Peralatan::find($id_barang);
+            if(!$peralatan)
+                return "ID peralatan tidak ditemukan";
+            if(strcmp($peralatan->status,"Perbaikan") == 0)
+                $peralatan->status = "Baik";
+            $peralatan->save();
+
             $perbaikan->save();
             return 1;
         }
@@ -187,7 +207,8 @@ class PerbaikanController extends Controller
         $perbaikan = Perbaikan::find($id);
         if(!$perbaikan)
                 return "Not Found";
-        $curDateTime =  strtotime(new DateTime());
+        $now = Carbon::now()->addHours(7)->toDateTimeString();  
+        $curDateTime = strtotime($now);
         $mulai = strtotime($perbaikan->waktu_booking_mulai);
         $selesai = strtotime($perbaikan->waktu_booking_selesai);
         if(($curDateTime > $mulai) && ($curDateTime < $selesai)){

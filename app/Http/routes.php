@@ -40,11 +40,15 @@ Route::post('checkEmail', 'AdminController@foundAdminWithEmail');
 Route::get('/peralatan', function () {
     return view('peralatan.index');
 });
+Route::get('/peralatan/s/{jenis}', function () {
+    return view('peralatan.index');
+});
 Route::get('/peralatan/jadwal/{id}/{start_date}/{end_date}','PeralatanController@jadwal');
 Route::get('/api/v1/peralatan/{id?}', 'PeralatanController@peralatan');
 Route::post('/api/v1/peralatan', 'PeralatanController@store');
 Route::post('/api/v1/peralatan/{id}', 'PeralatanController@update');
 Route::delete('/api/v1/peralatan/{id}', 'PeralatanController@destroy');
+Route::get('/api/v1/peralatan/s/{jenis?}', 'PeralatanController@search');
 
 Route::get('/perbaikan', function () {
     return view('perbaikan.index');
@@ -58,10 +62,14 @@ Route::delete('/api/v1/perbaikan/{id}', 'PerbaikanController@destroy');
 Route::get('/pengguna', function () {
     return view('pengguna.index');
 });
+Route::get('/pengguna/s/{nama}', function () {
+    return view('pengguna.index');
+});
 Route::get('/api/v1/pengguna/{id?}', 'PenggunaController@pengguna');
 Route::post('/api/v1/pengguna', 'PenggunaController@store');
 Route::post('/api/v1/pengguna/{id}', 'PenggunaController@update');
 Route::delete('/api/v1/pengguna/{id}', 'PenggunaController@destroy');
+Route::get('/api/v1/pengguna/s/{nama?}', 'PenggunaController@search');
 
 Route::get('/transaksi', function () {
     return view('transaksi.index');

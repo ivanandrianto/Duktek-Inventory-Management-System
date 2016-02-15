@@ -37,7 +37,6 @@ border: solid 1px red;
                         <td><% booking.waktu_booking_selesai %></td>
                         <td>
                             <button class="btn btn-default btn-xs btn-detail" ng-click="toggle('edit', booking.id)">Edit</button>
-                            <button class="btn btn-default btn-xs btn-detail" ng-click="toggle('end', booking.id)">Akhiri</button>
                             <button class="btn btn-danger btn-xs btn-delete" ng-click="confirmDelete(booking.id)">Delete</button>
                         </td>
                     </tr>
@@ -103,6 +102,23 @@ border: solid 1px red;
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-primary" id="btn-save" ng-click="save(modalstate, id, '{{ csrf_token() }}')" ng-disabled="frmBooking.$invalid">Save changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <% successMessage %>
+                            ID Booking: <% saved_booking.id %><br>
+                            ID Peralatan: <% saved_booking.peralatan.id %><br>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" id="btn-ok" ng-click="ok()">OK</button>
                         </div>
                     </div>
                 </div>

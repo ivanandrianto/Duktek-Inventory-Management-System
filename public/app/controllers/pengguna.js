@@ -1,13 +1,20 @@
 
 
-appPengguna.controller('penggunaController', function($scope, $http, API_URL) {
-    //retrieve peralatan listing from API
-    //var token = CSRF_TOKEN;
-    //alert("token = " + CSRF_TOKEN);
-    $http.get(API_URL + "pengguna")
-            .success(function(response) {
-                $scope.penggunas = response;
-            });
+appPengguna.controller('penggunaController', function($scope, $location, $http, API_URL) {
+
+    var nama = $location.search().nama;
+    if(!nama){nama = "";}
+    if(nama.length>0){
+        $http.get(API_URL + "pengguna/s/" + nama)
+        .success(function(response) {
+            $scope.penggunas = response;
+        });
+    } else {
+        $http.get(API_URL + "pengguna")
+        .success(function(response) {
+            $scope.penggunas = response;
+        });
+    }
 
     $scope.jenis_list = [
         {"value":"1","name":"Mahasiswa"},

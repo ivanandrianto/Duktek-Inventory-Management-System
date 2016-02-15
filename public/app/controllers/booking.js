@@ -97,9 +97,28 @@ appBooking.controller('bookingController', function($scope, $http, API_URL) {
             data: $.param($scope.booking),
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).success(function(response) {
-            console.log(response);
-            if(response == 1){
-                location.reload();
+            alert(response);
+            if(response >= 1){
+                $('#myModal').modal('hide');
+                if (modalstate === 'edit'){
+                    $scope.successMessage = "Data berhasil diupdate";
+                } else {
+                    $scope.successMessage = "Data berhasil disimpan";
+                }
+
+                $http.get(API_URL + 'booking/' + response)
+                .success(function(response) {
+                    $scope.saved_transaksi    = response;
+                });
+
+                $('#successModal').modal({
+                    backdrop: 'static',
+                    keyboard: false  // to prevent closing with Esc button (if you want this too)
+                })
+                $('#successModal').on('hidden.bs.modal', function () {
+                    location.reload();
+                })
+                $('#successModal').modal('show');
             } else {
                 $scope.error = response;
             }
@@ -108,6 +127,10 @@ appBooking.controller('bookingController', function($scope, $http, API_URL) {
             alert(response);
             alert('Error');
         });
+    }
+
+    $scope.ok = function() {
+        location.reload();
     }
 
     //delete record

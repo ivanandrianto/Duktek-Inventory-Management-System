@@ -140,9 +140,6 @@
                     </div>
                 </div>
             </div>
-
-
-
         </div>
 
         <!-- Load Javascript Libraries (AngularJS, JQuery, Bootstrap) -->

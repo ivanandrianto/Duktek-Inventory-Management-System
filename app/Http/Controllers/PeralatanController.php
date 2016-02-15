@@ -51,6 +51,15 @@ class PeralatanController extends Controller
         }
     }
 
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function search($jenis) {
+        return Peralatan::where('jenis', 'LIKE' , '%'.$jenis.'%')->get();
+    }
+
     public function jadwal($id,$start_date,$end_date)
     {
         $jam_min = "00:00:00";
