@@ -45,7 +45,6 @@ div[class^="col-"], div[class*=" col-"] {
 
 </head>
 <body>
-{{ $start_date }} - {{ $end_date }} - {{ $period }}
 
 	<div id="myWorkContent">
 	@for ($i = 0; $i < $period; $i++)
