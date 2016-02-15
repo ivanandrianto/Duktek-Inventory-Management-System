@@ -53,6 +53,7 @@ appTransaksi.controller('transaksiController', function($scope, $http, API_URL) 
                 $scope.waktu_pinjam_required = true;
                 $scope.ro_truefalse = false;
                 $('.waktu_kembali').show();
+                $('.waktu_rencana_kembali').show();
                 $('.waktu_pinjam').show();
                 $scope.form_title = "Transaksi Detail";
                 $scope.id = id;

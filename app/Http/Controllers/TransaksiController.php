@@ -104,12 +104,12 @@ class TransaksiController extends Controller
             $curTime = strtotime($now);
 
             if(!checkDateTime(Input::get('waktu_rencana_kembali'))){
-                return "Waktu rencana kembali tidak valid 1";
+                return "Waktu rencana kembali tidak valid";
             }
 
             $output->writeln(Input::get('waktu_rencana_kembali'));
             if($curTime >= strtotime(Input::get('waktu_rencana_kembali'))){
-                return "Waktu rencana kembali tidak valid 2";
+                return "Waktu rencana kembali tidak valid";
             }
 
             $waktu_rencana_kembali_time = strtotime(Input::get('waktu_rencana_kembali'));
@@ -213,6 +213,30 @@ class TransaksiController extends Controller
             if(!$transaksi)
                 return "Not Found";
 
+            if(!checkDateTime(Input::get('waktu_pinjam'))){
+                return "Waktu pinjam tidak valid";
+            }
+
+            if(!checkDateTime(Input::get('waktu_rencana_kembali'))){
+                return "Waktu rencana kembali tidak valid";
+            }
+
+            if(strtotime(Input::get('waktu_rencana_kembali')) <= strtotime(Input::get('waktu_pinjam'))){
+                return "Waktu tidak valid";
+            }
+
+            if(Input::get('waktu_kembali')){
+                if(!checkDateTime(Input::get('waktu_kembali'))){
+                    return "Waktu kembali tidak valid";
+                }
+
+                if(strtotime(Input::get('waktu_kembali')) <= strtotime(Input::get('waktu_pinjam'))){
+                return "Waktu tidak valid";
+                    }
+            }
+
+            
+
             $id_barang_old = $transaksi->id_barang;
             $barang_old = Peralatan::find($id_barang_old);
             $jenis_barang_old = $barang_old->jenis;
@@ -270,24 +294,44 @@ class TransaksiController extends Controller
      */
     public function end(Request $request, $id)
     {
-        // store
-        $transaksi = Transaksi::find($id);
-        if(!$transaksi)
-            return "Not Found";
 
-        $now = Carbon::now()->addHours(7)->toDateTimeString();  
-        $transaksi->waktu_kembali   = $now;
-        $id_barang = $transaksi->id_barang;
-        $transaksi->save();
+        $rules = array(
+            'waktu_kembali'   => 'required'
+        );
+        $validator = Validator::make(Input::all(), $rules);
 
-        //ubah ketersediaan peralatan
-        $peralatan = Peralatan::find($id_barang);
-        if(!$peralatan)
-            return "ID peralatan tidak ditemukan";
-        $peralatan->ketersediaan = "Tersedia";
-        $peralatan->save();
+        // process the update
+        if ($validator->fails()) {
+            return $validator->messages()->toJson();
+        } else {
+            // store
+            $transaksi = Transaksi::find($id);
+            if(!$transaksi)
+                return "Not Found";
 
-        return 1;
+
+            if(!checkDateTime(Input::get('waktu_kembali'))){
+                return "Waktu kembali tidak valid";
+            }
+
+            if(strtotime(Input::get('waktu_kembali')) <= strtotime(Input::get('waktu_pinjam'))){
+            return "Waktu tidak valid";
+            }
+
+            $now = Carbon::now()->addHours(7)->toDateTimeString();  
+            $transaksi->waktu_kembali   = $now;
+            $id_barang = $transaksi->id_barang;
+            $transaksi->save();
+
+            //ubah ketersediaan peralatan
+            $peralatan = Peralatan::find($id_barang);
+            if(!$peralatan)
+                return "ID peralatan tidak ditemukan";
+            $peralatan->ketersediaan = "Tersedia";
+            $peralatan->save();
+
+            return 1;
+        }
     }
 
     /**
