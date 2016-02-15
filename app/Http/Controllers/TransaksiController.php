@@ -309,12 +309,12 @@ class TransaksiController extends Controller
             if(!$transaksi)
                 return "Not Found";
 
-
+            $waktu_pinjam = strtotime($transaksi->waktu_pinjam);
             if(!checkDateTime(Input::get('waktu_kembali'))){
                 return "Waktu kembali tidak valid";
             }
 
-            if(strtotime(Input::get('waktu_kembali')) <= strtotime(Input::get('waktu_pinjam'))){
+            if(strtotime(Input::get('waktu_kembali')) <= $waktu_pinjam){
             return "Waktu tidak valid";
             }
 

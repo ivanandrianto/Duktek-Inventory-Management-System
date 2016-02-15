@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 <html lang="en-US" ng-app="statistikRecords">
-<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="stylesheet" type="text/css" href="<?= asset('css/style.css') ?>">
     <head>
         <title>Statistik</title>
 
@@ -13,13 +13,7 @@
     <body>
         
         <div class="mycontainer">
-            <div class="mysidebar">
-                <a class="side" href="http://localhost:8000/pengguna">Pengguna</a><br>
-                <a class="side" href="http://localhost:8000/peralatan">Peralatan</a><br>
-                <a class="side" href="http://localhost:8000/transaksi">Transaksi</a><br>
-                <a class="side" href="http://localhost:8000/perbaikan">Perbaikan</a><br>
-                <a class="side" href="http://localhost:8000/statistik">Statistik</a><br>
-            </div>
+            @include('sidebar.sidebar1')
             <div>
                 <h2 class="title">Statistik</h2>
             </div>
