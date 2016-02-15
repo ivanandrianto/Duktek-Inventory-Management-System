@@ -49,6 +49,7 @@ Route::post('/api/v1/peralatan', 'PeralatanController@store');
 Route::post('/api/v1/peralatan/{id}', 'PeralatanController@update');
 Route::delete('/api/v1/peralatan/{id}', 'PeralatanController@destroy');
 Route::get('/api/v1/peralatan/s/{jenis?}', 'PeralatanController@search');
+Route::get('/api/v1/peralatan_jenis', 'PeralatanController@getJenis');
 
 Route::get('/perbaikan', function () {
     return view('perbaikan.index');

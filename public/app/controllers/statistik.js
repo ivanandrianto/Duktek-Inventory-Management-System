@@ -1,80 +1,147 @@
 
 appStatistik.controller('statistikController', function($scope, $http, API_URL) {
-    //retrieve transaksi listing from API
-    //var token = CSRF_TOKEN;
-    //alert("token = " + CSRF_TOKEN);
-    $http.get(API_URL + "transaksi")
+    $('#pengguna').hide();
+    $scope.tipe = "1";
+    $http.get(API_URL + "peralatan_jenis")
             .success(function(response) {
-                $scope.transaksis = response;
+                $scope.jeniss = response;
             });
 
-    $http.get(API_URL + "peralatan")
-            .success(function(response) {
-                $scope.peralatans = response;
-            });
-    $scope.waktu_pinjam_required = false;
-    $scope.ro_truefalse = false;
-    //alert(peralatans[0][0]);
-    var datetime_offset = 7*60*60000;
+    $scope.toggle = function(status){
+        if(status != 1)
+            $('#pengguna').hide();
+        else if(status == 1)
+            $('#pengguna').show();
 
-    //show modal form
-    $scope.toggle = function(modalstate, id) {
-        $scope.modalstate = modalstate;
-        $scope.error = "";
-        switch (modalstate) {
-            case 'add':
-                $scope.waktu_pinjam_required = false;
-                $scope.ro_truefalse = false;
-                $scope.form_title = "Buat Transaksi";
-                $scope.transaksi = "";
-                $scope.myDate = "";
-                $scope.myDate1 = "";
-                $('.waktu_pinjam').hide();
-                $('.waktu_rencana_kembali').show();
-                $('.waktu_kembali').hide();
-                break;
-            case 'end':
-                $scope.waktu_pinjam_required = true;
-                $scope.ro_truefalse = true;
-                $scope.form_title = "Tekan OK untuk mengakhiri transaksi";
-                $scope.id = id;
-                $scope.myDate2 = "";
-                $('.waktu_pinjam').hide();
-                $('.waktu_rencana_kembali').hide();
-                $('.waktu_kembali').hide();
-                $http.get(API_URL + 'transaksi/' + id)
-                        .success(function(response) {
-                            console.log(response);
-                            $scope.transaksi = response;
-                            $scope.myDate2 = "";
-                            $scope.transaksi.jenis_barang = $scope.transaksi.peralatan.jenis
-                        });
-                break;
-            case 'edit':
-                $scope.waktu_pinjam_required = true;
-                $scope.ro_truefalse = false;
-                $('.waktu_kembali').show();
-                $('.waktu_pinjam').show();
-                $scope.form_title = "Transaksi Detail";
-                $scope.id = id;
-                //$transaksi.jenis_barang = 
-                $http.get(API_URL + 'transaksi/' + id)
-                        .success(function(response) {
-                            console.log(response);
-                            $scope.transaksi    = response;
-                            $scope.myDate       = new Date(Date.parse($scope.transaksi.waktu_pinjam.replace('-','/','g')));
-                            $scope.myDate1      = new Date(Date.parse($scope.transaksi.waktu_rencana_kembali.replace('-','/','g')));
-                            $scope.myDate2      = new Date(Date.parse($scope.transaksi.waktu_kembali.replace('-','/','g')));
-                            $scope.transaksi.jenis_barang = $scope.transaksi.peralatan.jenis
-                            //alert($scope.transaksi.peralatan.jenis);
-                        });
-                break;
-            default:
-                break;
-        }
-        console.log(id);
-        $('#myModal').modal('show');
     }
 
-    
+    $scope.submit = function() {
+        if($scope.tipe == 1){
+            var data_statistik;
+            var data_bulan=[0,0,0,0,0,0,0,0,0,0,0,0];
+            $(document).ready(function(){
+                $.ajax({
+                    type: "GET",
+                  url: "http://localhost:8000/api/v1/statistik/penggunaan/"+$scope.jenis.jenis+"/"+$scope.tahun,
+                  success: function(data) {
+                    data_statistik = data;
+                    for (var i = 1;i<=data_bulan.length;i++){
+                        for (var j=0;j<data_statistik.length;j++){
+                            if (data_statistik[j].Bulan == i){
+                                data_bulan[i] = data_statistik[j].Jumlah_Pakai;
+                            }
+                        }    
+                    }
+
+                    var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
+                    var lineChartData = {
+                        labels : ["January","February","March","April","May","June","July","August","September","October","November","Desember"],
+                        datasets : [
+                            {
+                                label: "Grafik",
+                                fillColor : "rgba(220,220,220,0.2)",
+                                strokeColor : "rgba(220,220,220,1)",
+                                pointColor : "rgba(220,220,220,1)",
+                                pointStrokeColor : "#fff",
+                                pointHighlightFill : "#fff",
+                                pointHighlightStroke : "rgba(220,220,220,1)",
+                                data : [data_bulan[0],data_bulan[1],data_bulan[2],data_bulan[3],data_bulan[4],data_bulan[5],data_bulan[6],data_bulan[7],data_bulan[8],data_bulan[9],data_bulan[10],data_bulan[11]]
+                            },
+                        ]
+
+                    }
+                    var ctx = document.getElementById("canvas").getContext("2d");
+                        window.myLine = new Chart(ctx).Line(lineChartData, {
+                            responsive: true
+                        });
+                  }
+                });
+            });
+
+        }
+        else if($scope.tipe == 2){
+            var data_statistik;
+            var data_bulan=[0,0,0,0,0,0,0,0,0,0,0,0];
+            $(document).ready(function(){
+                $.ajax({
+                    type: "GET",
+                  url: "http://localhost:8000/api/v1/statistik/kerusakan/"+$scope.jenis.jenis+"/"+$scope.tahun,
+                  success: function(data) {                    
+                    data_statistik = data;
+                    for (var i = 1;i<=data_bulan.length;i++){
+                        for (var j=0;j<data_statistik.length;j++){
+                            if (data_statistik[j].Bulan == i){
+                                data_bulan[i] = data_statistik[j].Jumlah_Rusak;
+                            }
+                        }    
+                    }
+                    var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
+                    var lineChartData = {
+                        labels : ["January","February","March","April","May","June","July","August","September","October","November","Desember"],
+                        datasets : [
+                            {
+                                label: "Grafik",
+                                fillColor : "rgba(220,220,220,0.2)",
+                                strokeColor : "rgba(220,220,220,1)",
+                                pointColor : "rgba(220,220,220,1)",
+                                pointStrokeColor : "#fff",
+                                pointHighlightFill : "#fff",
+                                pointHighlightStroke : "rgba(220,220,220,1)",
+                                data : [data_bulan[0],data_bulan[1],data_bulan[2],data_bulan[3],data_bulan[4],data_bulan[5],data_bulan[6],data_bulan[7],data_bulan[8],data_bulan[9],data_bulan[10],data_bulan[11]]
+                            },
+                        ]
+
+                    }
+                    var ctx = document.getElementById("canvas").getContext("2d");
+                        window.myLine = new Chart(ctx).Line(lineChartData, {
+                            responsive: true
+                        });
+                  }
+                });
+            });
+        }
+        else if($scope.tipe == 3){
+            var data_statistik;
+            var data_bulan=[0,0,0,0,0,0,0,0,0,0,0,0];
+            $(document).ready(function(){
+                $.ajax({
+                    type: "GET",
+                  url: "http://localhost:8000/api/v1/statistik/kelompok/"+$scope.jenis.jenis+"/"+$scope.pengguna+"/"+$scope.tahun,
+                  success: function(data) {
+                    
+                    data_statistik = data;
+                    for (var i = 1;i<=data_bulan.length;i++){
+                        for (var j=0;j<data_statistik.length;j++){
+                            if (data_statistik[j].Bulan == i){
+                                data_bulan[i] = data_statistik[j].Jumlah_Pakai;
+                            }
+                        }    
+                    }
+                    var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
+                    var lineChartData = {
+                        labels : ["January","February","March","April","May","June","July","August","September","October","November","Desember"],
+                        datasets : [
+                            {
+                                label: "Grafik",//data_statistik[0].Kelompok_Pengguna,
+                                fillColor : "rgba(220,220,220,0.2)",
+                                strokeColor : "rgba(220,220,220,1)",
+                                pointColor : "rgba(220,220,220,1)",
+                                pointStrokeColor : "#fff",
+                                pointHighlightFill : "#fff",
+                                pointHighlightStroke : "rgba(220,220,220,1)",
+                                data : [data_bulan[0],data_bulan[1],data_bulan[2],data_bulan[3],data_bulan[4],data_bulan[5],data_bulan[6],data_bulan[7],data_bulan[8],data_bulan[9],data_bulan[10],data_bulan[11]]
+                            },
+                        ]
+
+                    }
+                    var ctx = document.getElementById("canvas").getContext("2d");
+                        window.myLine = new Chart(ctx).Line(lineChartData, {
+                            responsive: true
+                        });
+                  }
+                });
+            });
+        }
+    }
+
 });

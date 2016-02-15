@@ -42,3 +42,8 @@ var appBooking = angular.module('bookingRecords', ["ngQuickDate"], function($int
     })
     .constant('API_URL', 'http://localhost:8000/api/v1/');
 
+var appStatistik = angular.module('statistikRecords', [], function($interpolateProvider) {
+    $interpolateProvider.startSymbol('<%');
+    $interpolateProvider.endSymbol('%>');
+})
+.constant('API_URL', 'http://localhost:8000/api/v1/');
