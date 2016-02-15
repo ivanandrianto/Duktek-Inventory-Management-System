@@ -10,14 +10,14 @@
 
         
     </head>
-    <body>
+    <body ng-controller="statistikController">
         
         <div class="mycontainer">
             @include('sidebar.sidebar1')
             <div>
                 <h2 class="title">Statistik</h2>
             </div>
-            <div class="content" style="width:900px;height:100%" ng-controller="statistikController">                
+            <div class="content" style="width:900px;height:100%">                
                 <form name="frmStatistik" class="form-horizontal" novalidate="">
                 <div class="form-group error">
                     <label for="tipe" class="col-sm-3 control-label">Tipe Statistik</label>
@@ -49,7 +49,7 @@
                 </div>
                 <div class="form-group error">
                     <label for="tahun" class="col-sm-3 control-label">Tahun</label>
-                    <div class="col-sm-9">
+                    <div class="col-sm-9" style="color:black">
                         <input type="text" ng-model="tahun"/>
                     </div>
                 </div>

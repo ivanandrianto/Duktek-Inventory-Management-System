@@ -5,11 +5,11 @@
 
         <!-- Load Bootstrap CSS -->
         <link href="<?= asset('css/bootstrap.min.css') ?>" rel="stylesheet">
-        <link rel="stylesheet" type="text/css" href="<?= asset('css/style.css') ?>">
-        <meta name="csrf-token" content="{{ csrf_token() }}" />
-        <script>angular.module("penggunaRecords").constant("CSRF_TOKEN", '{{ csrf_token() }}');</script>
+<link href="<?= asset('css/ng-quick-date-plus-default-theme.css') ?>" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="<?= asset('css/style.css') ?>">
+
     </head>
-    <body>
+    <body ng-controller="penggunaController">
         <div class="mycontainer">
             @include('sidebar.sidebar1')
             <div class="content" style="width:900px;height:100%">
@@ -18,7 +18,7 @@
                     <input class="search-input" type="text" name="nama">
                     <input class="btn btn-primary" type="submit" value="Search">
                 </form>
-                <div ng-controller="penggunaController">
+                <div>
                     <table class="table">
                         <thead>
                             <tr>

@@ -15,12 +15,12 @@
             }
         </style>
     </head>
-    <body>
+    <body ng-controller="perbaikanController">
         <div class="mycontainer">
             @include('sidebar.sidebar1')
             <div class="content" style="width:900px;height:100%">
                 <h2>Perbaikan Database</h2>
-                <div  ng-controller="perbaikanController">
+                <div>
 
                     <!-- Table-to-load-the-data Part -->
                     <table class="table">

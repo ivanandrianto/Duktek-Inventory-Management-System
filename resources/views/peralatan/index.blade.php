@@ -9,7 +9,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}" />
         <script>angular.module("peralatanRecords").constant("CSRF_TOKEN", '{{ csrf_token() }}');</script>
     </head>
-    <body>
+    <body ng-controller="peralatanController">
         <div class="mycontainer">
             @include('sidebar.sidebar1')
             <div class="content" style="width:900px;height:100%">
@@ -18,7 +18,7 @@
                     <input class="search-input" type="text" name="jenis">
                     <input class="btn btn-primary" type="submit" value="Search">
                 </form>
-                <div ng-controller="peralatanController">
+                <div>
                     <table class="table">
                         <thead>
                             <tr>

@@ -13,12 +13,12 @@ border: solid 1px red;
             }
         </style>
     </head>
-    <body>
+    <body ng-controller="bookingController">
         <div class="mycontainer">
             @include('sidebar.sidebar1')
             <div class="content" style="width:900px;height:100%">
                 <h2>Booking Database</h2>
-                <div  ng-controller="bookingController">
+                <div>
 
                     <!-- Table-to-load-the-data Part -->
                     <table class="table">

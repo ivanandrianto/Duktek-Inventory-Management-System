@@ -40,11 +40,11 @@ appStatistik.controller('statistikController', function($scope, $http, API_URL) 
                             {
                                 label: "Grafik",
                                 fillColor : "rgba(220,220,220,0.2)",
-                                strokeColor : "rgba(220,220,220,1)",
-                                pointColor : "rgba(220,220,220,1)",
+                                strokeColor : "rgba(255,255,255,1)",
+                                pointColor : "rgba(255,255,255,1)",
                                 pointStrokeColor : "#fff",
                                 pointHighlightFill : "#fff",
-                                pointHighlightStroke : "rgba(220,220,220,1)",
+                                pointHighlightStroke : "rgba(255,255,255,1)",
                                 data : [data_bulan[0],data_bulan[1],data_bulan[2],data_bulan[3],data_bulan[4],data_bulan[5],data_bulan[6],data_bulan[7],data_bulan[8],data_bulan[9],data_bulan[10],data_bulan[11]]
                             },
                         ]
@@ -52,7 +52,7 @@ appStatistik.controller('statistikController', function($scope, $http, API_URL) 
                     }
                     var ctx = document.getElementById("canvas").getContext("2d");
                         window.myLine = new Chart(ctx).Line(lineChartData, {
-                            responsive: true
+                            responsive: true,scaleFontColor: "#FFFFFF"
                         });
                   }
                 });
@@ -82,11 +82,11 @@ appStatistik.controller('statistikController', function($scope, $http, API_URL) 
                             {
                                 label: "Grafik",
                                 fillColor : "rgba(220,220,220,0.2)",
-                                strokeColor : "rgba(220,220,220,1)",
-                                pointColor : "rgba(220,220,220,1)",
+                                strokeColor : "rgba(255,255,255,1)",
+                                pointColor : "rgba(255,255,255,1)",
                                 pointStrokeColor : "#fff",
                                 pointHighlightFill : "#fff",
-                                pointHighlightStroke : "rgba(220,220,220,1)",
+                                pointHighlightStroke : "rgba(255,255,255,1)",
                                 data : [data_bulan[0],data_bulan[1],data_bulan[2],data_bulan[3],data_bulan[4],data_bulan[5],data_bulan[6],data_bulan[7],data_bulan[8],data_bulan[9],data_bulan[10],data_bulan[11]]
                             },
                         ]
@@ -94,7 +94,7 @@ appStatistik.controller('statistikController', function($scope, $http, API_URL) 
                     }
                     var ctx = document.getElementById("canvas").getContext("2d");
                         window.myLine = new Chart(ctx).Line(lineChartData, {
-                            responsive: true
+                            responsive: true,scaleFontColor: "#FFFFFF"
                         });
                   }
                 });
@@ -124,11 +124,11 @@ appStatistik.controller('statistikController', function($scope, $http, API_URL) 
                             {
                                 label: "Grafik",//data_statistik[0].Kelompok_Pengguna,
                                 fillColor : "rgba(220,220,220,0.2)",
-                                strokeColor : "rgba(220,220,220,1)",
-                                pointColor : "rgba(220,220,220,1)",
+                                strokeColor : "rgba(255,255,255,1)",
+                                pointColor : "rgba(255,255,255,1)",
                                 pointStrokeColor : "#fff",
                                 pointHighlightFill : "#fff",
-                                pointHighlightStroke : "rgba(220,220,220,1)",
+                                pointHighlightStroke : "rgba(255,255,255,1)",
                                 data : [data_bulan[0],data_bulan[1],data_bulan[2],data_bulan[3],data_bulan[4],data_bulan[5],data_bulan[6],data_bulan[7],data_bulan[8],data_bulan[9],data_bulan[10],data_bulan[11]]
                             },
                         ]
@@ -136,7 +136,7 @@ appStatistik.controller('statistikController', function($scope, $http, API_URL) 
                     }
                     var ctx = document.getElementById("canvas").getContext("2d");
                         window.myLine = new Chart(ctx).Line(lineChartData, {
-                            responsive: true
+                            responsive: true,scaleFontColor: "#FFFFFF"
                         });
                   }
                 });
