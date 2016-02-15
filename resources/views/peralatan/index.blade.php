@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US" ng-app="peralatanRecords">
     <head>
-        <title>Laravel 5 AngularJS CRUD Example</title>
+        <title>Peralatan</title>
 
         <!-- Load Bootstrap CSS -->
         <link href="<?= asset('css/bootstrap.min.css') ?>" rel="stylesheet">
@@ -9,10 +9,12 @@
         <script>angular.module("peralatanRecords").constant("CSRF_TOKEN", '{{ csrf_token() }}');</script>
     </head>
     <body>
-        <h2>Peralatan Database</h2>
-        <div  ng-controller="peralatanController">
-
-            <!-- Table-to-load-the-data Part -->
+        <h2>Peralatan</h2>
+        <form name="searchPengguna" method="GET" action="">
+            <input type="text" name="jenis">
+            <input type="submit" value="Search">
+        </form>
+        <div ng-controller="peralatanController">
             <table class="table">
                 <thead>
                     <tr>

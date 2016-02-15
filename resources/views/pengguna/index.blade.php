@@ -9,10 +9,12 @@
         <script>angular.module("penggunaRecords").constant("CSRF_TOKEN", '{{ csrf_token() }}');</script>
     </head>
     <body>
-        <h2>Pengguna Database</h2>
-        <div  ng-controller="penggunaController">
-
-            <!-- Table-to-load-the-data Part -->
+        <h2>Pengguna</h2>
+        <form name="searchPengguna" method="GET" action="">
+            <input type="text" name="nama">
+            <input type="submit" value="Search">
+        </form>
+        <div ng-controller="penggunaController">
             <table class="table">
                 <thead>
                     <tr>
@@ -135,6 +137,7 @@
         <script src="<?= asset('app/lib/angular/angular.min.js') ?>"></script>
         <script src="<?= asset('js/jquery.min.js') ?>"></script>
         <script src="<?= asset('js/bootstrap.min.js') ?>"></script>
+        <script src="<?= asset('js/angular-route.min.js') ?>"></script>
         
         <!-- AngularJS Application Scripts -->
         <script src="<?= asset('app/app.js') ?>"></script>

@@ -92,8 +92,8 @@ class PerbaikanController extends Controller
             $peralatan = Peralatan::find(Input::get('id_barang'));
             if(!$peralatan)
                 return "ID peralatan tidak ditemukan";
-            if(strcmp($peralatan->status,"Perbaikan") == 0)
-                $peralatan->status = "Baik";
+            if(strcmp($peralatan->status,"Rusak") == 0)
+                $peralatan->status = "Perbaikan";
             $peralatan->save();
             $perbaikan->save();
             return 1;
