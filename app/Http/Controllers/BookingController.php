@@ -92,6 +92,18 @@ class BookingController extends Controller
             return $validator->messages()->toJson();
         } else {
 
+            if(strtotime(Input::get('waktu_booking_mulai')) >= strtotime(Input::get('waktu_booking_selesai'))){
+                return "Waktu booking mulai > waktu booking selesai";
+            }
+
+            if(!checkDateTime(Input::get('waktu_booking_mulai'))){
+                return "Waktu booking mulai tidak valid";
+            }
+
+            if(!checkDateTime(Input::get('waktu_booking_selesai'))){
+                return "Waktu booking selesai tidak valid";
+            }
+
             
             //cek id pembooking
             $pengguna = Pengguna::find(Input::get('id_pembooking'));
@@ -193,6 +205,18 @@ class BookingController extends Controller
         if ($validator->fails()) {
             return $validator->messages()->toJson();
         } else {
+
+            if(strtotime(Input::get('waktu_booking_mulai')) >= strtotime(Input::get('waktu_booking_selesai'))){
+                return "Waktu booking mulai > waktu booking selesai";
+            }
+
+            if(!checkDateTime(Input::get('waktu_booking_mulai'))){
+                return "Waktu booking mulai tidak valid";
+            }
+
+            if(!checkDateTime(Input::get('waktu_booking_selesai'))){
+                return "Waktu booking selesai tidak valid";
+            }
             //cek id pembooking
             $pengguna = Pengguna::find(Input::get('id_pembooking'));
             if(!$pengguna)
