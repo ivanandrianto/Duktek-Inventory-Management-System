@@ -1,32 +1,31 @@
 <!DOCTYPE html>
-<html lang="en-US">
+<html lang="en-US" ng-app="statistikRecords">
     <head>
         <title>Statistik</title>
 
         <!-- Load Bootstrap CSS -->
         <link href="<?= asset('css/bootstrap.min.css') ?>" rel="stylesheet">
         
-      
     </head>
     <body>
         <h2>Statistik</h2>
-        <div style="width:30%">
-            <div>
-                <canvas id="canvas" height="600" width="1000"></canvas>
+        <div style="width:50%" ng-controller="statistikController" align="center">
+            <form name="frmStatistik" class="form-horizontal" novalidate="">
+            <div class="form-group error jenis_barang">
+                <label for="jenis_barang" class="col-sm-3 control-label">Jenis Barang</label>
+                <div class="col-sm-9">
+                    <select ng-disabled="ro_truefalse" class="form-control has-error" id="jenis_barang" name="jenis_barang"  
+
+                        ng-init="transaksi.jenis_barang=transaksi.peralatan.jenis"
+                        ng-model="transaksi.jenis_barang"
+                        ng-options="peralatan.jenis as peralatan.jenis for peralatan in peralatans" 
+                        ng-required="true">
+                    </select>
+                </div>
             </div>
+            </form>
         </div>
 
-        <form name="frmStatistik" class="form-horizontal" novalidate="">
-                                <input id="_token" name="_token" type="hidden" value="<?php echo csrf_token(); ?>">
-
-                                <div class="form-group error jenis_barang">
-                                        <label for="jenis_barang" class="col-sm-3 control-label">Jenis Barang</label>
-                                        <div class="col-sm-9">
-                                            <select class="form-control has-error" id="jenis_barang" name="jenis_barang"></select>
-                                            <span class="help-inline">Field is required</span>
-                                        </div>
-                                </div>
-                            </form>
 
 <!-- ..............................Penggunaan................................................... -->
 <!--
@@ -207,6 +206,6 @@
        
         <!-- AngularJS Application Scripts -->
         <script src="<?= asset('app/app.js') ?>"></script>
-        <script src="<?= asset('app/controllers/pengguna.js') ?>"></script>
+        <script src="<?= asset('app/controllers/statistik.js') ?>"></script>
     </body>
 </html>
