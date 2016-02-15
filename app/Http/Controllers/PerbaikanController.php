@@ -7,9 +7,10 @@ use Illuminate\Http\Request;
 use Auth;
 use App\Admin;
 use App\Perbaikan;
+use App\Peralatan;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
@@ -73,23 +74,38 @@ class PerbaikanController extends Controller
      */
     public function store(Request $request)
     {
+        $output = new \Symfony\Component\Console\Output\ConsoleOutput(2);
+        $now = Carbon::now()->addHours(7)->toDateTimeString();
+        $output->writeln($now);
+        $curTime = strtotime($now);
+
         $rules = array(
             'id_barang'     => 'required',
             'waktu_mulai'   => 'required'
         );
+
         $validator = Validator::make(Input::all(), $rules);
 
         // process the store
         if ($validator->fails()) {
             return $validator->messages()->toJson();
-
         } else {
+            if(!checkDateTime(Input::get('waktu_mulai'))){
+                return "Waktu mulai tidak valid 1";
+            }
+
+            $output->writeln(Input::get('waktu_mulai'));
+            if($curTime >= strtotime(Input::get('waktu_mulai'))){
+                return "Waktu mulai tidak valid 2";
+            }
+            
             // store
             $perbaikan = new perbaikan;
             $perbaikan->id_barang       = Input::get('id_barang');
             $perbaikan->waktu_mulai     = Input::get('waktu_mulai');
             //ubah status peralatan
             $peralatan = Peralatan::find(Input::get('id_barang'));
+            $output->writeln("F");
             if(!$peralatan)
                 return "ID peralatan tidak ditemukan";
             if(strcmp($peralatan->status,"Rusak") == 0)
@@ -108,6 +124,7 @@ class PerbaikanController extends Controller
      */
     public function edit($id)
     {
+
         $perbaikan = Perbaikan::find($id);
         if(!$perbaikan)
             return view('errors.404');
@@ -135,6 +152,19 @@ class PerbaikanController extends Controller
             return $validator->messages()->toJson();
 
         } else {
+
+            if(strtotime(Input::get('waktu_mulai')) >= strtotime(Input::get('waktu_selesai'))){
+                return "Waktu mulai > waktu selesai";
+            }
+
+            if(!checkDateTime(Input::get('waktu_mulai'))){
+                return "Waktu mulai tidak valid";
+            }
+
+            if(!checkDateTime(Input::get('waktu_selesai'))){
+                return "Waktu selesai tidak valid";
+            }
+
             // store
             $perbaikan = Perbaikan::find($id);
             if(!$perbaikan)
@@ -172,14 +202,26 @@ class PerbaikanController extends Controller
             return $validator->messages()->toJson();
 
         } else {
+            $perbaikan = Perbaikan::find($id);
+            if(!$perbaikan)
+                return "Not Found";
+
+            $waktu_mulai = strtotime($perbaikan->waktu_mulai);
+
+            if($waktu_mulai>= strtotime(Input::get('waktu_selesai'))){
+                return "Waktu mulai > waktu selesai";
+            }
+
+            if(!checkDateTime(Input::get('waktu_selesai'))){
+                return "Waktu selesai tidak valid";
+            }
+
             // store
             $peralatan = Peralatan::find($id);
             if(!$peralatan)
                 return "ID peralatan tidak ditemukan";
 
-            $perbaikan = Perbaikan::find($id);
-            if(!$perbaikan)
-                return "Not Found";
+            
             $id_barang = $perbaikan->id_barang;
             $perbaikan->waktu_selesai   = Input::get('waktu_selesai');
 
@@ -207,8 +249,8 @@ class PerbaikanController extends Controller
         $perbaikan = Perbaikan::find($id);
         if(!$perbaikan)
                 return "Not Found";
-        $now = Carbon::now()->addHours(7)->toDateTimeString();  
-        $curDateTime = strtotime($now);
+            $now = Carbon::now()->addHours(7)->toDateTimeString();  
+            $curDateTime = strtotime($now);
         $mulai = strtotime($perbaikan->waktu_booking_mulai);
         $selesai = strtotime($perbaikan->waktu_booking_selesai);
         if(($curDateTime > $mulai) && ($curDateTime < $selesai)){
