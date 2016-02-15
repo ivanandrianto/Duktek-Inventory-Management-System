@@ -12,4 +12,11 @@ function adminOnly()
 	}
 	return $result;
 }
+function checkDateTime($data) {
+    if (date('Y-m-d H:i:s', strtotime($data)) == $data) {
+        return true;
+    } else {
+        return false;
+    }
+}
 ?>

@@ -102,6 +102,16 @@ class TransaksiController extends Controller
             $now = Carbon::now()->addHours(7)->toDateTimeString();
             $output->writeln($now);
             $curTime = strtotime($now);
+
+            if(!checkDateTime(Input::get('waktu_rencana_kembali'))){
+                return "Waktu rencana kembali tidak valid 1";
+            }
+
+            $output->writeln(Input::get('waktu_rencana_kembali'));
+            if($curTime >= strtotime(Input::get('waktu_rencana_kembali'))){
+                return "Waktu rencana kembali tidak valid 2";
+            }
+
             $waktu_rencana_kembali_time = strtotime(Input::get('waktu_rencana_kembali'));
             foreach ($alat_sesuai_jenis as $alat)
             {
