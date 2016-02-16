@@ -81,7 +81,6 @@ appPeralatan.controller('peralatanController', function($scope, $location, $http
         if (modalstate === 'edit'){
             url += "/" + id;
         }
-        alert(csrf_token);
         $http({
             method: 'POST',
             url: url,
@@ -109,7 +108,6 @@ appPeralatan.controller('peralatanController', function($scope, $location, $http
             }
         }).error(function(response) {
             console.log(response);
-            alert(response);
             alert('Error');
         });
     }
@@ -126,11 +124,13 @@ appPeralatan.controller('peralatanController', function($scope, $location, $http
                 method: 'DELETE',
                 url: API_URL + 'peralatan/' + id
             }).success(function(response) {
-                console.log(response);
-                location.reload();
+                if(response == 1){
+                    location.reload();
+                } else {
+                    alert("Tidak dapat menghapus");
+                }
             }).error(function(response) {
                 console.log(response);
-                alert(response);
                 alert('Error');
             });
         } else {

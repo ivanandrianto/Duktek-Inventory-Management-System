@@ -101,7 +101,6 @@ appPengguna.controller('penggunaController', function($scope, $location, $http, 
             }
         }).error(function(response) {
             console.log(response);
-            alert(response);
             alert('Error');
         });
     }
@@ -125,7 +124,6 @@ appPengguna.controller('penggunaController', function($scope, $location, $http, 
                 }
             }).error(function(response) {
                 console.log(response);
-                alert(response);
                 alert('Error');
             });
         } else {

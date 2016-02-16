@@ -86,26 +86,16 @@ class PenggunaController extends Controller
         $output->writeln("store");
         $rules = array(
             'id'        => 'required|integer',
-            'nama'      => 'required',
-            'alamat'    => 'required',
-            'no_telp'   => 'required',
+            'nama'      => 'required|min:5',
+            'alamat'    => 'required|min:5',
+            'no_telp'   => 'required|min:6',
             'jenis'     => 'required'
         );
         $validator = Validator::make(Input::all(), $rules);
 
         // process the login
         if ($validator->fails()) {
-            $output = new \Symfony\Component\Console\Output\ConsoleOutput(2); 
-            $error = $validator->messages()->toJson();
-            $output->writeln("a");
-            $json_output = json_decode($error);
-            $output->writeln("b");
-            /*$x
-            foreach ( $json_output->trends as $trend )
-            {
-                echo "{$trend->name}\n";
-            }*/
-            $output->writeln($error);
+            return $validator->messages()->toJson();
         } else {
 
             //cek apakah id yang sama sudah ada
@@ -126,8 +116,10 @@ class PenggunaController extends Controller
                     $jenis = "Mahasiswa";
                 } else if(Input::get('jenis') == 2) {
                     $jenis = "Dosen";
-                } else {
+                } else if(Input::get('jenis') == 3){
                     $jenis = "Karyawan";
+                } else {
+                    return "Jenis tidak valid";
                 }
 
                 // store
@@ -169,9 +161,9 @@ class PenggunaController extends Controller
     {
         $rules = array(
             'id'        => 'required|integer',
-            'nama'      => 'required',
-            'alamat'    => 'required',
-            'no_telp'   => 'required',
+            'nama'      => 'required|min:5',
+            'alamat'    => 'required|min:5',
+            'no_telp'   => 'required|min:6',
             'jenis'     => 'required'
         );
         $validator = Validator::make(Input::all(), $rules);
@@ -185,9 +177,12 @@ class PenggunaController extends Controller
                 $jenis = "Mahasiswa";
             } else if(Input::get('jenis') == 2) {
                 $jenis = "Dosen";
-            } else {
+            } else if(Input::get('jenis') == 3){
                 $jenis = "Karyawan";
+            } else {
+                return "Jenis tidak valid";
             }
+
             // update
             $pengguna = Pengguna::find($id);
             if(!$pengguna)

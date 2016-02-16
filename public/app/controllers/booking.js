@@ -1,8 +1,6 @@
 
 appBooking.controller('bookingController', function($scope, $http, API_URL) {
-    //retrieve booking listing from API
-    //var token = CSRF_TOKEN;
-    //alert("token = " + CSRF_TOKEN);
+
     $http.get(API_URL + "booking")
             .success(function(response) {
                 $scope.bookings = response;
@@ -14,7 +12,6 @@ appBooking.controller('bookingController', function($scope, $http, API_URL) {
             });
 
     $scope.ro_truefalse = false;
-    //alert(peralatans[0][0]);
     var datetime_offset = 7*60*60000;
 
     //show modal form
@@ -41,6 +38,7 @@ appBooking.controller('bookingController', function($scope, $http, API_URL) {
                         $scope.booking      = response;
                         $scope.myDate       = new Date(Date.parse($scope.booking.waktu_booking_mulai.replace('-','/','g')));
                         $scope.myDate2      = new Date(Date.parse($scope.booking.waktu_booking_selesai.replace('-','/','g')));
+                        $scope.booking.jenis_barang = $scope.booking.peralatan.jenis
                     });
                 break;
             default:
@@ -90,14 +88,12 @@ appBooking.controller('bookingController', function($scope, $http, API_URL) {
         } else if(modalstate === 'end'){
             url += "/end/" + id;
         }
-        alert(url); 
         $http({
             method: 'POST',
             url: url,
             data: $.param($scope.booking),
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).success(function(response) {
-            alert(response);
             if(response >= 1){
                 $('#myModal').modal('hide');
                 if (modalstate === 'edit'){
@@ -124,7 +120,6 @@ appBooking.controller('bookingController', function($scope, $http, API_URL) {
             }
         }).error(function(response) {
             console.log(response);
-            alert(response);
             alert('Error');
         });
     }
@@ -141,11 +136,13 @@ appBooking.controller('bookingController', function($scope, $http, API_URL) {
                 method: 'DELETE',
                 url: API_URL + 'booking/' + id
             }).success(function(response) {
-                console.log(response);
-                location.reload();
+                if(response == 1){
+                    location.reload();
+                } else {
+                    alert("Tidak dapat menghapus");
+                }
             }).error(function(response) {
                 console.log(response);
-                alert(response);
                 alert('Error');
             });
         } else {

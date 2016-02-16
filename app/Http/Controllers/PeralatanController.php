@@ -264,16 +264,20 @@ $output->writeln($booking->count());
             $ketersediaan = $status = "";
             if(Input::get('ketersediaan') == 1){
                 $ketersediaan = "Tersedia";
-            } else {
+            } else if (Input::get('ketersediaan') == 0){
                 $ketersediaan = "Sedang Digunakan";
+            } else {
+                return "Ketersediaan tidak valid";
             }
 
             if(Input::get('status') == 0){
                 $status = "Rusak";
             } else if(Input::get('status') == 1) {
                 $status = "Baik";
-            } else {
+            } else if(Input::get('status') == 2) {
                 $status = "Perbaikan";
+            } else {
+                return "Status tidak valid";
             }
             // store
             $peralatan = new peralatan;
@@ -329,16 +333,20 @@ $output->writeln($booking->count());
             // update
             if(Input::get('ketersediaan') == 1){
                 $ketersediaan = "Tersedia";
-            } else {
+            } else if (Input::get('ketersediaan') == 0){
                 $ketersediaan = "Sedang Digunakan";
+            } else {
+                return "Ketersediaan tidak valid";
             }
 
             if(Input::get('status') == 0){
                 $status = "Rusak";
             } else if(Input::get('status') == 1) {
                 $status = "Baik";
-            } else {
+            } else if(Input::get('status') == 2) {
                 $status = "Perbaikan";
+            } else {
+                return "Status tidak valid";
             }
 
             $peralatan = Peralatan::find($id);

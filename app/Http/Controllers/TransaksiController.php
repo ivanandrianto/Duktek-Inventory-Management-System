@@ -82,7 +82,7 @@ class TransaksiController extends Controller
 
         $rules = array(
             'jenis_barang'          => 'required',
-            'id_peminjam'           => 'required',
+            'id_peminjam'           => 'required|integer',
             'waktu_rencana_kembali' => 'required'
         );
         $validator = Validator::make(Input::all(), $rules);
@@ -100,7 +100,6 @@ class TransaksiController extends Controller
             $alat_sesuai_jenis = Peralatan::where('jenis' , '=', Input::get('jenis_barang'))->get();
             $selected_id = -1;
             $now = Carbon::now()->addHours(7)->toDateTimeString();
-            $output->writeln($now);
             $curTime = strtotime($now);
 
             if(!checkDateTime(Input::get('waktu_rencana_kembali'))){
@@ -130,8 +129,8 @@ class TransaksiController extends Controller
                     $output->writeln($curTime);
                     $output->writeln($booking_mulai_time);
                     $output->writeln($booking_selesai_time);
-                    if((($curTime > $booking_mulai_time) && ($curTime < $booking_selesai_time)) ||
-                        (($waktu_rencana_kembali_time > $booking_mulai_time) && ($waktu_rencana_kembali_time < $booking_selesai_time))||(($booking_mulai_time > $curTime) && ($booking_mulai_time < $waktu_rencana_kembali_time))||(($booking_selesai_time > $curTime) && ($booking_selesai_time < $waktu_rencana_kembali_time))){
+                    if((($curTime >= $booking_mulai_time) && ($curTime <= $booking_selesai_time)) ||
+                        (($waktu_rencana_kembali_time >= $booking_mulai_time) && ($waktu_rencana_kembali_time <= $booking_selesai_time))||(($booking_mulai_time >= $curTime) && ($booking_mulai_time <= $waktu_rencana_kembali_time))||(($booking_selesai_time >= $curTime) && ($booking_selesai_time <= $waktu_rencana_kembali_time))){
                             $available = false;
                     }
                 }
@@ -193,7 +192,7 @@ class TransaksiController extends Controller
     {
         $rules = array(
             'jenis_barang'          => 'required',
-            'id_peminjam'           => 'required',
+            'id_peminjam'           => 'required|integer',
             'waktu_pinjam'          => 'required',
             'waktu_rencana_kembali' => 'required'
         );
@@ -274,7 +273,7 @@ class TransaksiController extends Controller
             if($selected_id < 1){
                 return "Tidak ada alat tersedia";
             } else {
-                $transaksi->id_barang               = Input::get('id_barang');
+                $transaksi->id_barang               = $selected_id;
                 $transaksi->id_peminjam             = Input::get('id_peminjam');
                 $transaksi->waktu_pinjam            = Input::get('waktu_pinjam');
                 $transaksi->waktu_rencana_kembali   = Input::get('waktu_rencana_kembali');
@@ -294,44 +293,36 @@ class TransaksiController extends Controller
      */
     public function end(Request $request, $id)
     {
+        // store
+        $transaksi = Transaksi::find($id);
+        if(!$transaksi)
+            return "Not Found";
 
-        $rules = array(
-            'waktu_kembali'   => 'required'
-        );
-        $validator = Validator::make(Input::all(), $rules);
-
-        // process the update
-        if ($validator->fails()) {
-            return $validator->messages()->toJson();
-        } else {
-            // store
-            $transaksi = Transaksi::find($id);
-            if(!$transaksi)
-                return "Not Found";
-
-            $waktu_pinjam = strtotime($transaksi->waktu_pinjam);
-            if(!checkDateTime(Input::get('waktu_kembali'))){
-                return "Waktu kembali tidak valid";
+        if((strtotime($transaksi->waktu_kembali) != null)){
+                return "Transaksi sudah diakhiri";
             }
 
-            if(strtotime(Input::get('waktu_kembali')) <= $waktu_pinjam){
+        $waktu_pinjam = strtotime($transaksi->waktu_pinjam);
+
+        $now = Carbon::now()->addHours(7)->toDateTimeString();
+        $curTime = strtotime($now);
+        if($curTime <= $waktu_pinjam){
             return "Waktu tidak valid";
-            }
-
-            $now = Carbon::now()->addHours(7)->toDateTimeString();  
-            $transaksi->waktu_kembali   = $now;
-            $id_barang = $transaksi->id_barang;
-            $transaksi->save();
-
-            //ubah ketersediaan peralatan
-            $peralatan = Peralatan::find($id_barang);
-            if(!$peralatan)
-                return "ID peralatan tidak ditemukan";
-            $peralatan->ketersediaan = "Tersedia";
-            $peralatan->save();
-
-            return 1;
         }
+        $transaksi->waktu_kembali   = $now;
+        $id_barang = $transaksi->id_barang;
+
+        $transaksi->save();
+
+        //ubah ketersediaan peralatan
+        $peralatan = Peralatan::find($id_barang);
+        if(!$peralatan)
+            return "ID peralatan tidak ditemukan";
+        $peralatan->ketersediaan = "Tersedia";
+        $peralatan->save();
+
+        return 1;
+        
     }
 
     /**

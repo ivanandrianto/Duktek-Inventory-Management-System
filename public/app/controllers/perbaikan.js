@@ -1,8 +1,6 @@
 
 appPerbaikan.controller('perbaikanController', function($scope, $http, API_URL) {
-    //retrieve perbaikan listing from API
-    //var token = CSRF_TOKEN;
-    //alert("token = " + CSRF_TOKEN);
+
     $http.get(API_URL + "perbaikan")
             .success(function(response) {
                 $scope.perbaikans = response;
@@ -42,7 +40,6 @@ appPerbaikan.controller('perbaikanController', function($scope, $http, API_URL) 
                         });
                 break;
             case 'edit':
-                alert();
                 $('.waktu_selesai').show();
                 $('.waktu_mulai').show();
                 $scope.form_title = "Perbaikan Detail";
@@ -75,7 +72,6 @@ appPerbaikan.controller('perbaikanController', function($scope, $http, API_URL) 
             'waktu_mulai' : $scope.perbaikan.waktu_mulai,
             'waktu_selesai' : $scope.perbaikan.waktu_selesai,
         });
-        alert($scope.perbaikan.id_barang);
         var date;
         date = new Date($scope.myDate);
         date = new Date(date.getTime() + datetime_offset);
@@ -103,7 +99,6 @@ appPerbaikan.controller('perbaikanController', function($scope, $http, API_URL) 
         } else if(modalstate === 'end'){
             url += "/end/" + id;
         }
-        alert(csrf_token);
         $http({
             method: 'POST',
             url: url,
@@ -132,7 +127,6 @@ appPerbaikan.controller('perbaikanController', function($scope, $http, API_URL) 
             }
         }).error(function(response) {
             console.log(response);
-            alert(response);
             alert('Error');
         });
     }
@@ -145,11 +139,13 @@ appPerbaikan.controller('perbaikanController', function($scope, $http, API_URL) 
                 method: 'DELETE',
                 url: API_URL + 'perbaikan/' + id
             }).success(function(response) {
-                console.log(response);
-                location.reload();
+                if(response == 1){
+                    location.reload();
+                } else {
+                    alert("Tidak dapat menghapus");
+                }
             }).error(function(response) {
                 console.log(response);
-                alert(response);
                 alert('Error');
             });
         } else {

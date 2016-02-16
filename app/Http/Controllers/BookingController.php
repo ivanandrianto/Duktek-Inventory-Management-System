@@ -10,6 +10,7 @@ use App\Booking;
 use App\Pengguna;
 use App\Transaksi;
 use App\Peralatan;
+use Carbon\Carbon;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -92,10 +93,6 @@ class BookingController extends Controller
             return $validator->messages()->toJson();
         } else {
 
-            if(strtotime(Input::get('waktu_booking_mulai')) >= strtotime(Input::get('waktu_booking_selesai'))){
-                return "Waktu booking mulai > waktu booking selesai";
-            }
-
             if(!checkDateTime(Input::get('waktu_booking_mulai'))){
                 return "Waktu booking mulai tidak valid";
             }
@@ -104,7 +101,17 @@ class BookingController extends Controller
                 return "Waktu booking selesai tidak valid";
             }
 
-            
+            if(strtotime(Input::get('waktu_booking_mulai')) >= strtotime(Input::get('waktu_booking_selesai'))){
+                return "Waktu booking mulai > waktu booking selesai";
+            }
+
+            $now = Carbon::now()->addHours(7)->toDateTimeString();
+            $curTime = strtotime($now);
+
+            if($curTime >= strtotime(Input::get('waktu_booking_mulai'))){
+                return "Waktu booking mulai > waktu sekarang";
+            }
+
             //cek id pembooking
             $pengguna = Pengguna::find(Input::get('id_pembooking'));
             if(!$pengguna)
@@ -206,10 +213,6 @@ class BookingController extends Controller
             return $validator->messages()->toJson();
         } else {
 
-            if(strtotime(Input::get('waktu_booking_mulai')) >= strtotime(Input::get('waktu_booking_selesai'))){
-                return "Waktu booking mulai > waktu booking selesai";
-            }
-
             if(!checkDateTime(Input::get('waktu_booking_mulai'))){
                 return "Waktu booking mulai tidak valid";
             }
@@ -217,6 +220,11 @@ class BookingController extends Controller
             if(!checkDateTime(Input::get('waktu_booking_selesai'))){
                 return "Waktu booking selesai tidak valid";
             }
+
+            if(strtotime(Input::get('waktu_booking_mulai')) >= strtotime(Input::get('waktu_booking_selesai'))){
+                return "Waktu booking mulai > waktu booking selesai";
+            }
+
             //cek id pembooking
             $pengguna = Pengguna::find(Input::get('id_pembooking'));
             if(!$pengguna)

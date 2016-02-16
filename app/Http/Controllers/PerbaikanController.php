@@ -40,8 +40,9 @@ class PerbaikanController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function show($id) {
-        return Perbaikan::find($id);
+    public function show($id) {        
+        $perbaikan = Perbaikan::find($id);
+        return Perbaikan::with('peralatan')->get()->find($id);
     }
 
     /**
@@ -91,13 +92,12 @@ class PerbaikanController extends Controller
             return $validator->messages()->toJson();
         } else {
             if(!checkDateTime(Input::get('waktu_mulai'))){
-                return "Waktu mulai tidak valid 1";
+                return "Waktu mulai tidak valid";
             }
 
-            $output->writeln(Input::get('waktu_mulai'));
-            if($curTime >= strtotime(Input::get('waktu_mulai'))){
-                return "Waktu mulai tidak valid 2";
-            }
+            /*if($curTime >= strtotime(Input::get('waktu_mulai'))){
+                return "Waktu mulai tidak valid";
+            }*/
             
             // store
             $perbaikan = new perbaikan;
@@ -105,11 +105,13 @@ class PerbaikanController extends Controller
             $perbaikan->waktu_mulai     = Input::get('waktu_mulai');
             //ubah status peralatan
             $peralatan = Peralatan::find(Input::get('id_barang'));
-            $output->writeln("F");
             if(!$peralatan)
                 return "ID peralatan tidak ditemukan";
-            if(strcmp($peralatan->status,"Rusak") == 0)
+            if(strcmp($peralatan->status,"Rusak") == 0){
                 $peralatan->status = "Perbaikan";
+            } else {
+                return "Peralatan tidak rusak";
+            }
             $peralatan->save();
             $perbaikan->save();
             return 1;
@@ -153,16 +155,18 @@ class PerbaikanController extends Controller
 
         } else {
 
-            if(strtotime(Input::get('waktu_mulai')) >= strtotime(Input::get('waktu_selesai'))){
-                return "Waktu mulai > waktu selesai";
-            }
-
             if(!checkDateTime(Input::get('waktu_mulai'))){
                 return "Waktu mulai tidak valid";
             }
 
-            if(!checkDateTime(Input::get('waktu_selesai'))){
-                return "Waktu selesai tidak valid";
+            if(Input::get('waktu_selesai')){
+                if(!checkDateTime(Input::get('waktu_selesai'))){
+                    return "Waktu selesai tidak valid";
+                }
+
+                if(strtotime(Input::get('waktu_selesai')) <= strtotime(Input::get('waktu_mulai'))){
+                return "Waktu tidak valid";
+                    }
             }
 
             // store
@@ -202,18 +206,23 @@ class PerbaikanController extends Controller
             return $validator->messages()->toJson();
 
         } else {
+
             $perbaikan = Perbaikan::find($id);
             if(!$perbaikan)
                 return "Not Found";
 
-            $waktu_mulai = strtotime($perbaikan->waktu_mulai);
-
-            if($waktu_mulai>= strtotime(Input::get('waktu_selesai'))){
-                return "Waktu mulai > waktu selesai";
+            if((strtotime($perbaikan->waktu_selesai) != null)){
+                return "Perbaikan sudah diakhiri";
             }
+
+            $waktu_mulai = strtotime($perbaikan->waktu_mulai);
 
             if(!checkDateTime(Input::get('waktu_selesai'))){
                 return "Waktu selesai tidak valid";
+            }
+
+            if($waktu_mulai>= strtotime(Input::get('waktu_selesai'))){
+                return "Waktu mulai > waktu selesai";
             }
 
             // store
@@ -231,8 +240,8 @@ class PerbaikanController extends Controller
                 return "ID peralatan tidak ditemukan";
             if(strcmp($peralatan->status,"Perbaikan") == 0)
                 $peralatan->status = "Baik";
-            $peralatan->save();
 
+            $peralatan->save();
             $perbaikan->save();
             return 1;
         }

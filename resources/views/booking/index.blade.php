@@ -70,7 +70,7 @@ border: solid 1px red;
                                                 ng-show="frmBooking.id_pembooking.$invalid && frmBooking.id_pembooking.$touched">Nama field is required</span>
                                             </div>
                                         </div>
-
+                                        
                                         <div class="form-group error jenis_barang">
                                             <label for="jenis_barang" class="col-sm-3 control-label">Jenis Barang</label>
                                             <div class="col-sm-9">

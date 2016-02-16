@@ -177,8 +177,11 @@ appTransaksi.controller('transaksiController', function($scope, $http, API_URL) 
                 method: 'DELETE',
                 url: API_URL + 'transaksi/' + id
             }).success(function(response) {
-                console.log(response);
-                location.reload();
+                if(response == 1){
+                    location.reload();
+                } else {
+                    alert("Tidak dapat menghapus");
+                }
             }).error(function(response) {
                 console.log(response);
                 alert('Error');
