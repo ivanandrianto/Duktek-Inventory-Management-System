@@ -87,7 +87,7 @@
                                         <div class="form-group error waktu_selesai">
                                             <label for="waktu_selesai" class="col-sm-3 control-label">Waktu Selesai</label>
                                             <div class="col-sm-9">
-                                                <quick-datepicker type="text" name="waktu_selesai" id="waktu_selesai" init-value="waktu_selesai" ng-model="myDate2" required></quick-datepicker>
+                                                <quick-datepicker type="text" name="waktu_selesai" id="waktu_selesai" init-value="waktu_selesai" ng-model="myDate2"></quick-datepicker>
                                                 <span class="help-inline" 
                                                 ng-show="frmPerbaikan.waktu_selesai.$invalid && frmPerbaikan.waktu_selesai.$touched">Waktu field is required</span>
                                             </div>

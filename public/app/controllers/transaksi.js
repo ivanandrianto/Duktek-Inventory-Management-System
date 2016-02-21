@@ -64,7 +64,11 @@ appTransaksi.controller('transaksiController', function($scope, $http, API_URL) 
                             $scope.transaksi    = response;
                             $scope.myDate       = new Date(Date.parse($scope.transaksi.waktu_pinjam.replace('-','/','g')));
                             $scope.myDate1      = new Date(Date.parse($scope.transaksi.waktu_rencana_kembali.replace('-','/','g')));
-                            $scope.myDate2      = new Date(Date.parse($scope.transaksi.waktu_kembali.replace('-','/','g')));
+                            if(!($scope.transaksi.waktu_kembali=="0000-00-00 00:00:00")){
+                                $scope.myDate2  = new Date(Date.parse($scope.transaksi.waktu_kembali.replace('-','/','g')));
+                            } else {
+                                $scope.myDate2  = "";    
+                            }
                             $scope.transaksi.jenis_barang = $scope.transaksi.peralatan.jenis
                         });
                 break;
@@ -111,17 +115,21 @@ appTransaksi.controller('transaksiController', function($scope, $http, API_URL) 
         
 
         var date2;
-        date2 = new Date($scope.myDate2);
-        date2 = new Date(date2.getTime() + datetime_offset);
-        date2 = date2.getUTCFullYear() + '-' +
-            ('00' + (date2.getUTCMonth()+1)).slice(-2) + '-' +
-            ('00' + date2.getUTCDate()).slice(-2) + ' ' + 
-            ('00' + date2.getUTCHours()).slice(-2) + ':' + 
-            ('00' + date2.getUTCMinutes()).slice(-2) + ':' + 
-            ('00' + date2.getUTCSeconds()).slice(-2);
-        $scope.transaksi.waktu_kembali = date2;
+        if((''+$scope.myDate2).length > 0){
+
+            date2 = new Date($scope.myDate2);
+            date2 = new Date(date2.getTime() + datetime_offset);
+            date2 = date2.getUTCFullYear() + '-' +
+                ('00' + (date2.getUTCMonth()+1)).slice(-2) + '-' +
+                ('00' + date2.getUTCDate()).slice(-2) + ' ' + 
+                ('00' + date2.getUTCHours()).slice(-2) + ':' + 
+                ('00' + date2.getUTCMinutes()).slice(-2) + ':' + 
+                ('00' + date2.getUTCSeconds()).slice(-2);
+            $scope.transaksi.waktu_kembali = date2;
+        } else {
+            $scope.transaksi.waktu_kembali = "";
+        }
         
-        //append transaksi id to the URL if the form is in edit mode
         if (modalstate === 'edit'){
             url += "/" + id;
         } else if(modalstate === 'end'){

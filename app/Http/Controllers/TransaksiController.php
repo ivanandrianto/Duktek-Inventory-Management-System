@@ -76,10 +76,6 @@ class TransaksiController extends Controller
      */
     public function store(Request $request)
     {
-
-        $output = new \Symfony\Component\Console\Output\ConsoleOutput(2);
-        $output->writeln("store");
-
         $rules = array(
             'jenis_barang'          => 'required',
             'id_peminjam'           => 'required|integer',
@@ -106,7 +102,6 @@ class TransaksiController extends Controller
                 return "Waktu rencana kembali tidak valid";
             }
 
-            $output->writeln(Input::get('waktu_rencana_kembali'));
             if($curTime >= strtotime(Input::get('waktu_rencana_kembali'))){
                 return "Waktu rencana kembali tidak valid";
             }
@@ -115,8 +110,6 @@ class TransaksiController extends Controller
             foreach ($alat_sesuai_jenis as $alat)
             {
                 $available = true;
-                $output->writeln($alat->status);
-                $output->writeln($alat->ketersediaan);
                 if((strcmp($alat->status,"Baik") != 0) || (strcmp($alat->ketersediaan,"Tersedia") != 0)){
                     $available = false;
                     break;
@@ -126,9 +119,6 @@ class TransaksiController extends Controller
                 foreach ($booking_of_alat as $booking){
                     $booking_mulai_time = strtotime($booking->waktu_booking_mulai);
                     $booking_selesai_time = strtotime($booking->waktu_booking_selesai);
-                    $output->writeln($curTime);
-                    $output->writeln($booking_mulai_time);
-                    $output->writeln($booking_selesai_time);
                     if((($curTime >= $booking_mulai_time) && ($curTime <= $booking_selesai_time)) ||
                         (($waktu_rencana_kembali_time >= $booking_mulai_time) && ($waktu_rencana_kembali_time <= $booking_selesai_time))||(($booking_mulai_time >= $curTime) && ($booking_mulai_time <= $waktu_rencana_kembali_time))||(($booking_selesai_time >= $curTime) && ($booking_selesai_time <= $waktu_rencana_kembali_time))){
                             $available = false;
@@ -190,6 +180,7 @@ class TransaksiController extends Controller
      */
     public function update(Request $request, $id)
     {
+
         $rules = array(
             'jenis_barang'          => 'required',
             'id_peminjam'           => 'required|integer',
@@ -224,7 +215,7 @@ class TransaksiController extends Controller
                 return "Waktu tidak valid";
             }
 
-            if(Input::get('waktu_kembali')){
+            if(Input::get('waktu_kembali')!=null){
                 if(!checkDateTime(Input::get('waktu_kembali'))){
                     return "Waktu kembali tidak valid";
                 }
@@ -249,8 +240,6 @@ class TransaksiController extends Controller
                 foreach ($alat_sesuai_jenis as $alat)
                 {
                     $available = true;
-                    $output->writeln($alat->status);
-                    $output->writeln($alat->ketersediaan);
                     if((strcmp($alat->status,"Baik") != 0) || (strcmp($alat->ketersediaan,"Tersedia") != 0)){
                         $available = false;
                         break;

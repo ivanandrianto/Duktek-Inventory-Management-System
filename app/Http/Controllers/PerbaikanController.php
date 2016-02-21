@@ -159,7 +159,7 @@ class PerbaikanController extends Controller
                 return "Waktu mulai tidak valid";
             }
 
-            if(Input::get('waktu_selesai')){
+            if(Input::get('waktu_selesai')!=null){
                 if(!checkDateTime(Input::get('waktu_selesai'))){
                     return "Waktu selesai tidak valid";
                 }

@@ -49,7 +49,12 @@ appPerbaikan.controller('perbaikanController', function($scope, $http, API_URL) 
                             console.log(response);
                             $scope.perbaikan = response;
                             $scope.myDate = new Date(Date.parse($scope.perbaikan.waktu_mulai.replace('-','/','g')));
-                            $scope.myDate2 = new Date(Date.parse($scope.perbaikan.waktu_selesai.replace('-','/','g')));
+                            if(!($scope.perbaikan.waktu_selesai=="0000-00-00 00:00:00")){
+                                $scope.myDate2 = new Date(Date.parse($scope.perbaikan.waktu_selesai.replace('-','/','g')));
+                            } else {
+                                $scope.myDate2  = "";    
+                            }
+                            
                         });
                 break;
             default:
@@ -84,16 +89,20 @@ appPerbaikan.controller('perbaikanController', function($scope, $http, API_URL) 
         $scope.perbaikan.waktu_mulai = date;
 
         var date2;
-        date2 = new Date($scope.myDate2);
-        date2 = new Date(date2.getTime() + datetime_offset);
-        date2 = date2.getUTCFullYear() + '-' +
-            ('00' + (date2.getUTCMonth()+1)).slice(-2) + '-' +
-            ('00' + date2.getUTCDate()).slice(-2) + ' ' + 
-            ('00' + date2.getUTCHours()).slice(-2) + ':' + 
-            ('00' + date2.getUTCMinutes()).slice(-2) + ':' + 
-            ('00' + date2.getUTCSeconds()).slice(-2);
-        $scope.perbaikan.waktu_selesai = date2;
-        //append perbaikan id to the URL if the form is in edit mode
+        if((''+$scope.myDate2).length > 0){
+            date2 = new Date($scope.myDate2);
+            date2 = new Date(date2.getTime() + datetime_offset);
+            date2 = date2.getUTCFullYear() + '-' +
+                ('00' + (date2.getUTCMonth()+1)).slice(-2) + '-' +
+                ('00' + date2.getUTCDate()).slice(-2) + ' ' + 
+                ('00' + date2.getUTCHours()).slice(-2) + ':' + 
+                ('00' + date2.getUTCMinutes()).slice(-2) + ':' + 
+                ('00' + date2.getUTCSeconds()).slice(-2);
+            $scope.perbaikan.waktu_selesai = date2;
+        } else {
+            $scope.perbaikan.waktu_selesai = "";
+        }
+        
         if (modalstate === 'edit'){
             url += "/" + id;
         } else if(modalstate === 'end'){
