@@ -159,7 +159,7 @@ class BookingController extends Controller
                     $booking->id_barang                 = $selected_id;
                     $booking->id_pembooking             = Input::get('id_pembooking');
                     $booking->waktu_booking_mulai       = Input::get('waktu_booking_mulai');
-                    $booking->waktu_booking_selesai     = Input::get('waktu_booking_kembali');
+                    $booking->waktu_booking_selesai     = Input::get('waktu_booking_selesai');
                     $booking->save();
                     return $booking->id;
                 }
@@ -272,14 +272,14 @@ class BookingController extends Controller
                 return "Tidak ada alat tersedia";
             } else {
                 /* cek tanggal */
-                if(strtotime(Input::get('waktu_booking_mulai')) <= strtotime(Input::get('waktu_booking_selesai'))){
+                if(strtotime(Input::get('waktu_booking_selesai')) <= strtotime(Input::get('waktu_booking_mulai'))){
                     return "Tanggal tidak valid";
                 } else {
                     // store
                     $booking->id_barang                 = $selected_id;
                     $booking->id_pembooking             = Input::get('id_pembooking');
                     $booking->waktu_booking_mulai       = Input::get('waktu_booking_mulai');
-                    $booking->waktu_booking_selesai     = Input::get('waktu_booking_kembali');
+                    $booking->waktu_booking_selesai     = Input::get('waktu_booking_selesai');
                     $booking->save();
                     return $booking->id;
                 }

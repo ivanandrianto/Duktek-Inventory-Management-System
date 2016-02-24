@@ -67,7 +67,8 @@ appTransaksi.controller('transaksiController', function($scope, $http, API_URL) 
                             if(!($scope.transaksi.waktu_kembali=="0000-00-00 00:00:00")){
                                 $scope.myDate2  = new Date(Date.parse($scope.transaksi.waktu_kembali.replace('-','/','g')));
                             } else {
-                                $scope.myDate2  = "";    
+                                $scope.myDate2  = "";
+                                $('.waktu_kembali').hide();  
                             }
                             $scope.transaksi.jenis_barang = $scope.transaksi.peralatan.jenis
                         });

@@ -96,7 +96,7 @@ border: solid 1px red;
                                         <div class="form-group error waktu_booking_selesai">
                                             <label for="waktu_booking_selesai" class="col-sm-3 control-label">Waktu Booking Selesai</label>
                                             <div class="col-sm-9">
-                                                <quick-datepicker type="text" name="waktu_booking_selesai" id="waktu_sbooking_elesai" init-value="waktu_booking_selesai" ng-model="myDate2" required></quick-datepicker>
+                                                <quick-datepicker type="text" name="waktu_booking_selesai" id="waktu_booking_selesai" init-value="waktu_booking_selesai" ng-model="myDate2" required></quick-datepicker>
                                                 <span class="help-inline" 
                                                 ng-show="frmBooking.waktu_booking_selesai.$invalid && frmBooking.waktu_booking_selesai.$touched">Waktu field is required</span>
                                             </div>
