@@ -116,9 +116,6 @@
                                                 ng-show="frmTransaksi.waktu_kembali.$invalid && frmTransaksi.waktu_kembali.$touched">Waktu field is required</span>
                                             </div>
                                         </div>
-
-
-
                                     </form>
                                 </div>
                                 <div class="modal-footer">

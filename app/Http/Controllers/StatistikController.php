@@ -114,11 +114,14 @@ class StatistikController extends Controller
             ->where('peralatan.jenis', '=', $jenis )//, ['jenis' => $jenis]) 
             ->where(DB::raw('YEAR(transaksi.waktu_pinjam)'), '=', $tahun )// ,['tahun' => $tahun])
             ->join('peralatan', 'transaksi.id_barang', '=', 'peralatan.id')
-            ->groupBy(DB::raw('MONTH(transaksi.waktu_pinjam)'))
-            ->get();
+            ->groupBy(DB::raw('MONTH(transaksi.waktu_pinjam)'));
 
         
-        return $results;
+        if($results->count() > 0){
+            return $results->get();
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -137,10 +140,13 @@ class StatistikController extends Controller
             ->where('peralatan.jenis', '=', $jenis )//, ['jenis' => $jenis]) 
             ->where(DB::raw('YEAR(perbaikan.waktu_mulai)'), '=', $tahun )// ,['tahun' => $tahun])
             ->join('peralatan', 'perbaikan.id_barang', '=', 'peralatan.id')
-            ->groupBy(DB::raw('MONTH(perbaikan.waktu_mulai)'))
-            ->get();
+            ->groupBy(DB::raw('MONTH(perbaikan.waktu_mulai)'));
         
-        return $results;
+        if($results->count() > 0){
+            return $results->get();
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -162,10 +168,13 @@ class StatistikController extends Controller
             ->where(DB::raw('YEAR(transaksi.waktu_pinjam)'), '=', $tahun )
             ->join('peralatan', 'transaksi.id_barang', '=', 'peralatan.id')
             ->join('pengguna', 'transaksi.id_peminjam', '=', 'pengguna.id')
-            ->groupBy(DB::raw('MONTH(transaksi.waktu_pinjam)'))
-            ->get();
+            ->groupBy(DB::raw('MONTH(transaksi.waktu_pinjam)'));
 
-        return $results;
+        if($results->count() > 0){
+            return $results->get();
+        } else {
+            return 0;
+        }
     }
 
 }

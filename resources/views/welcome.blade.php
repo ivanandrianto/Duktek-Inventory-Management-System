@@ -4,7 +4,7 @@
         <title>Laravel</title>
 
         <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
-
+        <link rel="stylesheet" type="text/css" href="<?= asset('css/style.css') ?>">
         <style>
             html, body {
                 height: 100%;
@@ -28,6 +28,7 @@
             .content {
                 text-align: center;
                 display: inline-block;
+                height : 298px;
             }
 
             .title {
@@ -37,6 +38,7 @@
     </head>
     <body>
         <div class="container">
+            @include('sidebar.sidebar1')
             <div class="content">
                 <div class="title">Duktek Inventory Management System</div>
             </div>
