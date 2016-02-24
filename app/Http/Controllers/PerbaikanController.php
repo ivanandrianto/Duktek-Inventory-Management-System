@@ -173,9 +173,15 @@ class PerbaikanController extends Controller
             $perbaikan = Perbaikan::find($id);
             if(!$perbaikan)
                 return "Not Found";
+
+            $_waktu_selesai = "";
+            if(strcmp($perbaikan->waktu_selesai,"0000-00-00 00:00:00") != 0)
+                $_waktu_selesai = Input::get('waktu_selesai');
+            
+
             $perbaikan->id_barang       = Input::get('id_barang');
             $perbaikan->waktu_mulai     = Input::get('waktu_mulai');
-            $perbaikan->waktu_selesai   = Input::get('waktu_selesai');
+            $perbaikan->waktu_selesai   = $_waktu_selesai;
             $perbaikan->save();
             return 1;
         }

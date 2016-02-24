@@ -1,4 +1,4 @@
-
+    
 appBooking.controller('bookingController', function($scope, $http, API_URL) {
 
     $http.get(API_URL + "booking")
@@ -104,7 +104,7 @@ appBooking.controller('bookingController', function($scope, $http, API_URL) {
 
                 $http.get(API_URL + 'booking/' + response)
                 .success(function(response) {
-                    $scope.saved_transaksi    = response;
+                    $scope.saved_booking    = response;
                 });
 
                 $('#successModal').modal({

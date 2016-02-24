@@ -52,7 +52,8 @@ appPerbaikan.controller('perbaikanController', function($scope, $http, API_URL) 
                             if(!($scope.perbaikan.waktu_selesai=="0000-00-00 00:00:00")){
                                 $scope.myDate2 = new Date(Date.parse($scope.perbaikan.waktu_selesai.replace('-','/','g')));
                             } else {
-                                $scope.myDate2  = "";    
+                                $scope.myDate2  = "";
+                                $('.waktu_selesai').hide();     
                             }
                             
                         });

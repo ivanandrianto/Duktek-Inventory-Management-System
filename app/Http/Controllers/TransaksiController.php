@@ -259,6 +259,10 @@ class TransaksiController extends Controller
                     }
                 }
             }
+            $_waktu_kembali = "";
+            if(strcmp($transaksi->waktu_kembali,"0000-00-00 00:00:00") != 0)
+                $_waktu_kembali = Input::get('waktu_kembali');
+
             if($selected_id < 1){
                 return "Tidak ada alat tersedia";
             } else {
@@ -266,7 +270,7 @@ class TransaksiController extends Controller
                 $transaksi->id_peminjam             = Input::get('id_peminjam');
                 $transaksi->waktu_pinjam            = Input::get('waktu_pinjam');
                 $transaksi->waktu_rencana_kembali   = Input::get('waktu_rencana_kembali');
-                $transaksi->waktu_kembali           = Input::get('waktu_kembali');
+                $transaksi->waktu_kembali           = $_waktu_kembali;
                 $transaksi->save();
                 return $transaksi->id;
             }
