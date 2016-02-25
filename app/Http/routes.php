@@ -22,7 +22,6 @@ Route::resource('peralatan', 'PeralatanController');
 Route::resource('perbaikan', 'PerbaikanController');
 Route::resource('statistik', 'StatistikController');
 Route::resource('transaksi', 'TransaksiController');
-Route::resource('articles', 'ArticleController');
 Route::resource('dashboard', 'DashboardController');
 
 // Authentication routes...
